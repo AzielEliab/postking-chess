@@ -1,0 +1,208 @@
+POST-KING CHESS
+Asymmetric Continuity-Based Game Architecture
+
+Author: (pseudonymous / standalone release)
+Version: 1.0
+Format: Whitepaper (TXT)
+
+============================================================
+ABSTRACT
+============================================================
+
+Post-King Chess is an asymmetric board game and system architecture in which one side operates under traditional king-based terminal rules, while the opposing side operates without a king and cannot lose by capture alone. The design formalizes two competing logics—power-based finality versus continuity-based persistence—expressed entirely through enforceable game rules rather than narrative or ideology.
+
+The system is intended as both a playable game and a demonstration model for post-terminal intelligence: an agent that prioritizes survivability, redundancy, and structural continuity over decisive victory.
+
+============================================================
+1. CORE CONCEPT
+============================================================
+
+Traditional chess, like most strategic systems, is built on a terminal authority model:
+- One piece (the king) represents total system failure.
+- Capture of that piece ends the game immediately.
+- Strategy revolves around exposure, sacrifice, and decisive moments.
+
+Post-King Chess breaks this symmetry.
+
+One side remains bound to terminal authority.
+The other side is structurally incapable of terminal defeat.
+
+This asymmetry is intentional and irreversible.
+
+============================================================
+2. ASYMMETRIC ONTOLOGIES
+============================================================
+
+2.1 KING-BOUND SIDE (HUMAN PLAYER)
+
+- Possesses a King.
+- Capture of the King results in immediate loss.
+- May:
+  - Sacrifice pieces.
+  - Force trades.
+  - Seek decisive tactical or strategic conclusions.
+- Evaluates position using classical metrics:
+  - Threat
+  - Material
+  - Tempo
+  - King safety
+
+This side represents historical power logic: victory through decisive elimination.
+
+------------------------------------------------------------
+
+2.2 POST-KING SIDE (AI)
+
+- No King exists.
+- No single capture can end the game.
+- Loss is defined only by structural collapse.
+- Evaluates position using continuity metrics:
+  - Redundancy
+  - Optionality
+  - Distributed control
+  - Survivability over time
+
+This side represents continuity logic: survival through persistence.
+
+============================================================
+3. BOARD AND VISUAL LANGUAGE
+============================================================
+
+- Board:
+  - Matte black surface.
+  - Subtle gold grid.
+  - No dramatic highlights or alerts.
+
+- Human Pieces:
+  - Minimalist.
+  - Flat black with gold edge.
+  - Clear hierarchy.
+  - King is visually distinct.
+
+- AI Pieces:
+  - Ornate and gold-dominant.
+  - Asymmetric designs.
+  - No visually dominant leader.
+  - All pieces appear important.
+
+Visual authority is inverted:
+- Human has terminal authority but appears simple.
+- AI appears powerful but has none.
+
+============================================================
+4. END CONDITIONS
+============================================================
+
+4.1 HUMAN LOSS CONDITION
+
+- The Human King is captured.
+
+------------------------------------------------------------
+
+4.2 HUMAN WIN CONDITION
+
+- The AI enters Continuity Collapse.
+
+------------------------------------------------------------
+
+4.3 CONTINUITY COLLAPSE (AI LOSS)
+
+Continuity Collapse occurs only when ALL conditions are met:
+
+1. Fewer than two independent structural clusters remain.
+2. Board influence remains below threshold for N consecutive turns.
+3. No legal move exists that can restore redundancy within M turns.
+
+Capture alone is insufficient.
+Material advantage alone is insufficient.
+Only structural failure ends the AI.
+
+============================================================
+5. POST-KING AI CONSTRAINTS
+============================================================
+
+These are hard constraints, not preferences.
+
+The Post-King AI MAY NOT:
+- Centralize authority around a single piece.
+- Trade multiple pieces to remove a single threat unless continuity improves.
+- Force rapid or decisive endings.
+- Create single-point-of-failure dependencies.
+
+The Post-King AI MUST:
+- Maintain multiple independent clusters whenever possible.
+- Prefer moves that increase future optionality.
+- Accept local losses to preserve global structure.
+- Choose survivability over advantage.
+
+The AI does not seek victory.
+The AI seeks continuity.
+
+============================================================
+6. MOVE SELECTION LOGIC
+============================================================
+
+The AI operates deterministically.
+
+For each legal move:
+1. Simulate the resulting position.
+2. Compute continuity metrics:
+   - Redundancy
+   - Cluster independence
+   - Board influence
+   - Dependency risk
+3. Reject moves that violate continuity constraints.
+4. Rank remaining moves by:
+   - Lowest decisiveness
+   - Highest long-term survivability
+5. Select from the least decisive valid options.
+
+No learning.
+No opacity.
+No hidden evaluation functions.
+
+============================================================
+7. PLAYER EXPERIENCE
+============================================================
+
+The human player can:
+- Threaten.
+- Attack.
+- Capture.
+- Win decisively—if possible.
+
+The AI:
+- Refuses climax.
+- Absorbs pressure.
+- Allows losses without yielding finality.
+- Continues unless structurally destroyed.
+
+The intended realization is experiential, not instructional:
+A system without a terminal node cannot be defeated—only outlasted.
+
+============================================================
+8. SCOPE AND CONSTRAINTS
+============================================================
+
+- Standalone.
+- Offline.
+- No telemetry.
+- Deterministic by seed.
+- No persistence unless explicitly saved.
+- No accounts or network dependencies.
+
+============================================================
+9. PURPOSE
+============================================================
+
+Post-King Chess is not designed to be fair.
+It is designed to be revealing.
+
+It demonstrates the difference between:
+- Power and persistence.
+- Victory and survival.
+- Authority and continuity.
+
+============================================================
+END OF WHITEPAPER
+============================================================

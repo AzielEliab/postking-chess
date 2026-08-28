@@ -1,0 +1,12 @@
+# Sample CLI session (from the package root, after pip install -e .)
+
+postking version
+# postking 0.1.0
+
+postking new --difficulty steward --seed 1
+postking move e2e4
+postking status
+
+# UI (loopback only)
+# postking ui
+# http://127.0.0.1:8844

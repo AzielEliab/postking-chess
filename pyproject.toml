@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "postking-chess"
+version = "0.1.0"
+description = "Post-King Chess: asymmetric continuity-based game. The goal is not to win. The goal is to remain."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "Aziel Eliab"}]
+requires-python = ">=3.10"
+keywords = [
+    "chess",
+    "continuity",
+    "post-king",
+    "asymmetric",
+    "game",
+    "deterministic",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Games/Entertainment :: Board Games",
+    "Intended Audience :: End Users/Desktop",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+postking = "postking.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/AzielEliab/postking-chess"
+Download = "https://github.com/AzielEliab/postking-chess/releases"
+Issues = "https://github.com/AzielEliab/postking-chess/issues"
+Counted-downloads = "https://postking-download-tracker.vibelock.workers.dev/"
+
+[tool.setuptools.packages.find]
+include = ["postking*"]
+
+[tool.setuptools.package-data]
+postking = ["web/*", "docs/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

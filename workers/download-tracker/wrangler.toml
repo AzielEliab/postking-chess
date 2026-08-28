@@ -1,0 +1,14 @@
+name = "postking-download-tracker"
+main = "src/index.js"
+compatibility_date = "2026-07-01"
+workers_dev = true
+account_id = "ac575a9b822bea2bed97d0ab73aed238"
+
+[[kv_namespaces]]
+binding = "DOWNLOADS"
+id = "dbb9f4b45ea14ce1afd7880305cbac3a"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/", "/download", "/download/*", "/stats", "/event", "/go", "/count"]

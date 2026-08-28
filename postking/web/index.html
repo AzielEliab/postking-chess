@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post-King Chess</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <section id="start-screen" class="screen">
+    <div class="tag">Post-King Chess · v0.1.0 · loopback · CC BY 4.0</div>
+    <h1>Post-King Chess</h1>
+    <p class="motto">The goal is not to win. The goal is to remain.</p>
+    <p class="lede">
+      You keep a king. The other side does not. Capture is not an ending
+      for it. Only Continuity Collapse is. Asymmetric. Deterministic.
+      Offline.
+    </p>
+    <fieldset class="difficulties">
+      <legend>Difficulty</legend>
+      <label><input type="radio" name="difficulty" value="witness"> Witness <span>N=2 M=1 infl=0.18 · shallow</span></label>
+      <label><input type="radio" name="difficulty" value="steward" checked> Steward <span>N=3 M=2 infl=0.12 · default</span></label>
+      <label><input type="radio" name="difficulty" value="remain"> Remain <span>N=5 M=3 infl=0.08 · deeper</span></label>
+    </fieldset>
+    <label class="seed-row">Seed
+      <input id="seed" type="number" value="1" min="0" step="1">
+    </label>
+    <div class="actions">
+      <button id="new-game" type="button">New game</button>
+      <a class="button-link" id="philosophy-btn" href="/philosophy">Philosophy</a>
+    </div>
+    <p class="foot">Aziel Eliab · August 2026 · standalone</p>
+  </section>
+
+  <section id="board-screen" class="screen hidden">
+    <header class="board-head">
+      <div>
+        <div class="tag">Post-King Chess</div>
+        <p class="motto slim">The goal is not to win. The goal is to remain.</p>
+      </div>
+      <div class="head-actions">
+        <a class="text-link" href="/philosophy">Philosophy</a>
+        <button id="resign" type="button">Resign</button>
+        <button id="back-start" type="button">Start</button>
+      </div>
+    </header>
+
+    <div class="play">
+      <div class="board-wrap">
+        <div id="board" class="board" aria-label="chessboard"></div>
+        <p id="turn-line" class="turn-line"></p>
+      </div>
+      <aside class="meters">
+        <h2>Continuity</h2>
+        <div class="meter">
+          <div class="meter-label">Clusters <span id="m-clusters">—</span></div>
+          <div class="bar"><i id="bar-clusters"></i></div>
+          <p class="hint">Need fewer than two independent 8-adjacent AI groups.</p>
+        </div>
+        <div class="meter">
+          <div class="meter-label">Influence <span id="m-influence">—</span></div>
+          <div class="bar"><i id="bar-influence"></i></div>
+          <p class="hint">Fraction of squares the AI attacks. Hold below threshold for N turns.</p>
+        </div>
+        <div class="meter">
+          <div class="meter-label">Collapse <span id="m-collapse">—</span></div>
+          <div class="bar"><i id="bar-collapse"></i></div>
+          <p class="hint">All three: clusters, influence streak, no restore within M plies.</p>
+        </div>
+        <dl id="facts"></dl>
+        <p id="result-line" class="result-line"></p>
+      </aside>
+    </div>
+  </section>
+
+  <script src="/app.js"></script>
+</body>
+</html>
