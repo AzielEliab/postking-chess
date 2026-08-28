@@ -1,3 +1,4 @@
+import * as engine from "./engine.js";
 /**
  * Post-King Chess download tracker (Cloudflare Worker).
  *
@@ -203,10 +204,149 @@ async function indexHtml(env) {
     <a class="dl" href="/download?asset=postking-chess-0.1.0.tar.gz">Download postking-chess-0.1.0.tar.gz — ${n} counted</a>
     <p class="meta">The count ticks on this click. Nobody reports anything. Forks using this same link are counted automatically.</p>
     <p class="iso">Isolated counter: Worker <code>postking-download-tracker</code>, project <code>postking</code>. Standalone. Not mixed with any other product.</p>
-    <p class="meta"><a href="/stats">JSON stats</a> · <a href="${github}">GitHub releases</a></p>
+    <p class="meta"><a href="/ai">AI runtime</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/stats">JSON stats</a> · <a href="${github}">GitHub releases</a></p>
   </div>
 </body>
 </html>`;
+}
+
+
+function html(body) {
+  return new Response(body, {
+    headers: { "Content-Type": "text/html; charset=utf-8", ...corsHeaders() },
+  });
+}
+
+function originOf(request) {
+  try {
+    return new URL(request.url).origin;
+  } catch {
+    return "https://postking-download-tracker.vibelock.workers.dev";
+  }
+}
+
+function openapiSpec(request) {
+  const origin = originOf(request);
+  return {
+    openapi: "3.1.0",
+    info: {
+      title: "Post-King Chess runtime",
+      version: "0.1.0",
+      summary: "Stateless Post-King Chess. Human king-bound; AI has a Node.",
+      description: engine.MOTTO + " Worker subset: legal moves + 1-ply continuity AI.",
+    },
+    servers: [{ url: origin }],
+    paths: {
+      "/v1/health": { get: { operationId: "postking_health", summary: "Liveness. Does not increment download KV.", responses: { "200": { description: "ok" } } } },
+      "/v1/new": {
+        post: {
+          operationId: "postking_new",
+          summary: "Start a game. Body: {difficulty, seed}. Difficulties: witness|steward|remain.",
+          requestBody: { content: { "application/json": { schema: { type: "object", properties: { difficulty: { type: "string" }, seed: { type: "integer" } } } } } },
+          responses: { "200": { description: "state" } },
+        },
+      },
+      "/v1/move": {
+        post: {
+          operationId: "postking_move",
+          summary: "Play a human UCI move against the current FEN/state. Returns AI reply.",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: { fen_or_state: {}, uci: { type: "string" } } } } } },
+          responses: { "200": { description: "state" } },
+        },
+      },
+      "/v1/status": {
+        post: {
+          operationId: "postking_status",
+          summary: "Continuity status for a FEN/state. Stateless.",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object" } } } },
+          responses: { "200": { description: "state" } },
+        },
+      },
+    },
+  };
+}
+
+function aiHelpPage(request) {
+  const origin = originOf(request);
+  return `<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post-King Chess — AI runtime</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font: 16px/1.45 system-ui, sans-serif; max-width: 44rem; margin: 3rem auto; padding: 0 1.25rem; background: #0e1014; color: #e8eaef; }
+  a { color: #c9d4ff; }
+  code, pre { background: #151922; padding: .15rem .35rem; border-radius: 4px; }
+  pre { padding: .85rem 1rem; overflow: auto; }
+  .banner { border: 1px solid #5c4a1a; background: #241c0d; color: #f0d78c; padding: .85rem 1rem; border-radius: 8px; }
+</style>
+<body>
+<h1>Post-King Chess runtime</h1>
+<p class="banner">${engine.MOTTO} Human is king-bound. AI has a Node, not a king. Capture of the Node is not an ending.</p>
+<p>Stateless: send board state on every call. Worker AI is a <strong>1-ply subset</strong> (legal moves + continuity ranking). Full Python search lives in the package.</p>
+<p>OpenAPI: <a href="${origin}/openapi.json">${origin}/openapi.json</a></p>
+<p>Catalog: <a href="https://aziel-runtime.vibelock.workers.dev/">aziel-runtime.vibelock.workers.dev</a></p>
+<pre>curl -X POST ${origin}/v1/new -H 'content-type: application/json' -d '{"difficulty":"steward","seed":1}'
+curl -X POST ${origin}/v1/move -H 'content-type: application/json' \\
+  -d '{"fen_or_state":"${engine.START_FEN}","uci":"e2e4","difficulty":"steward","seed":1}'
+</pre>
+<p>GET/POST under <code>/v1</code> never increment the download counter.</p>
+<p><a href="/">Downloads</a></p>
+</body></html>`;
+}
+
+async function handleRuntime(request, url) {
+  const path = url.pathname.replace(/\/+$/, "") || "/";
+  if (path === "/v1/health" && request.method === "GET") {
+    return json({
+      ok: true,
+      product: "postking",
+      runtime: true,
+      kv_increment: false,
+      motto: engine.MOTTO,
+      subset: "1-ply continuity AI; full legal-move kernel",
+    });
+  }
+  if (path === "/openapi.json" && request.method === "GET") {
+    return json(openapiSpec(request));
+  }
+  if ((path === "/ai" || url.pathname === "/ai/") && request.method === "GET") {
+    return html(aiHelpPage(request));
+  }
+  if (path === "/v1/new" && request.method === "POST") {
+    let body = {};
+    try { body = await request.json(); } catch { body = {}; }
+    try {
+      return json(engine.newGame(body || {}));
+    } catch (err) {
+      return json({ error: String(err.message || err), motto: engine.MOTTO }, 400);
+    }
+  }
+  if (path === "/v1/move" && request.method === "POST") {
+    let body;
+    try { body = await request.json(); } catch {
+      return json({ error: "JSON body required", motto: engine.MOTTO }, 400);
+    }
+    try {
+      return json(await engine.playMove(body || {}));
+    } catch (err) {
+      return json({ error: String(err.message || err), motto: engine.MOTTO }, 400);
+    }
+  }
+  if (path === "/v1/status" && request.method === "POST") {
+    let body;
+    try { body = await request.json(); } catch {
+      return json({ error: "JSON body required", motto: engine.MOTTO }, 400);
+    }
+    try {
+      return json(engine.statusOf(body || {}));
+    } catch (err) {
+      return json({ error: String(err.message || err), motto: engine.MOTTO }, 400);
+    }
+  }
+  if (path.startsWith("/v1/") || path === "/v1") {
+    return json({ error: "not found", hint: "POST /v1/new /v1/move /v1/status", motto: engine.MOTTO }, 404);
+  }
+  return null;
 }
 
 export default {
@@ -216,6 +356,9 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
+
+    const runtime = await handleRuntime(request, url);
+    if (runtime) return runtime;
 
     if (url.pathname === "/" && request.method === "GET") {
       return new Response(await indexHtml(env), {

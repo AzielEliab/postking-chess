@@ -90,3 +90,12 @@ curl -X POST https://postking-download-tracker.vibelock.workers.dev/event \
 ## CORS
 
 All responses include `Access-Control-Allow-Origin: *`.
+
+`POST /v1/new` `POST /v1/move` `POST /v1/status`. Stateless. Worker AI is 1-ply.
+
+## AI runtime (`/v1`)
+
+CORS `*`. `GET /v1/health`, `GET /openapi.json` (OpenAPI 3.1), `GET /ai`.
+Routes under `/v1` **do not** increment download KV.
+
+Help page: `/ai`. Combined catalog: https://aziel-runtime.vibelock.workers.dev/

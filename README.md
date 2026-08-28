@@ -104,3 +104,23 @@ If it cannot continue without you, it was not redeemed.
 `workers/download-tracker/` is shipped, not deployed from this tree.
 Parent ships. Isolated counter: Worker `postking-download-tracker`,
 project `postking`.
+
+## AI runtime
+
+Stateless board API. Human is king-bound; AI has a **Node**, not a king.
+Motto: *The goal is not to win. The goal is to remain.*
+
+Worker subset: legal-move kernel + **1-ply** continuity AI (lowest
+decisiveness, then survivability). Full Witness/Steward/Remain search
+depths live in this Python package. Client sends FEN/state every call.
+
+- `POST https://postking-download-tracker.vibelock.workers.dev/v1/new` `{difficulty, seed}`
+- `POST https://postking-download-tracker.vibelock.workers.dev/v1/move` `{fen_or_state, uci}`
+- `POST https://postking-download-tracker.vibelock.workers.dev/v1/status` `{state}`
+- OpenAPI 3.1: https://postking-download-tracker.vibelock.workers.dev/openapi.json
+- Help: https://postking-download-tracker.vibelock.workers.dev/ai
+
+`/v1` does not increment the download counter.
+
+One-URL catalog: https://aziel-runtime.vibelock.workers.dev/openapi.json
+
