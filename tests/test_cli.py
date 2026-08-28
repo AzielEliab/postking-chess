@@ -40,3 +40,12 @@ def test_cli_move_without_save_fails(capsys, tmp_path: Path, monkeypatch) -> Non
     assert code == 1
     err = capsys.readouterr().err
     assert "no saved game" in err or "error" in err
+
+
+def test_help_lists_ui_and_version() -> None:
+    from postking.cli import _build_parser
+
+    text = _build_parser().format_help()
+    assert "ui" in text
+    assert "version" in text
+    assert "127.0.0.1:8844" in text or "postking ui" in text

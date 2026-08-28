@@ -25,7 +25,8 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="postking",
         description=(
             "Post-King Chess — asymmetric continuity-based game "
-            "(Aziel Eliab, 2026). The goal is not to win. The goal is to remain."
+            "(Aziel Eliab, 2026). The goal is not to win. The goal is to remain. "
+            "Local UI: `postking ui` at http://127.0.0.1:8844."
         ),
     )
     sub = parser.add_subparsers(dest="cmd", required=True)

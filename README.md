@@ -11,6 +11,18 @@ does not. Capture is not an ending for the Post-King side. Only
 
 > The goal is not to win. The goal is to remain.
 
+## Quick start
+
+```bash
+python -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
+postking ui
+```
+
+Open http://127.0.0.1:8844 (loopback only). No CDN, no telemetry.
+
+Counted download: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
+
+
 How to contribute: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 **Forks are welcome and always allowed.**
@@ -25,6 +37,18 @@ Direct counted tarball:
 [postking-chess-0.1.0.tar.gz](https://postking-download-tracker.vibelock.workers.dev/download?asset=postking-chess-0.1.0.tar.gz)
 
 GitHub: [https://github.com/AzielEliab/postking-chess](https://github.com/AzielEliab/postking-chess)
+
+## iPhone & Android
+
+A local-first Flutter client lives in [`mobile/`](mobile/). Open that
+folder in Android Studio or Xcode through Flutter (`flutter create .`
+first if `android/` / `ios/` still hold the skeleton READMEs). Board UI,
+Witness / Steward / Remain, Philosophy screen. Human has a king; AI has
+a node. Motto: *The goal is not to win. The goal is to remain.*
+
+Counted desktop download: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
+
+Forks are welcome and always allowed.
 
 Papers live in [docs/source](docs/source). The in-game Philosophy README
 is [docs/philosophy.md](docs/philosophy.md).
@@ -53,19 +77,6 @@ is [docs/philosophy.md](docs/philosophy.md).
 The AI does not seek victory. The AI seeks continuity. It may not leave
 one cluster if a two-cluster move exists. It ranks valid moves by
 lowest decisiveness, then highest survivability.
-
-## Quick start
-
-Python 3.10+. Stdlib only at runtime. Motto: *The goal is not to win. The goal is to remain.*
-Philosophy: [docs/philosophy.md](docs/philosophy.md).
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-postking ui                                   # 127.0.0.1:8844 loopback only
-python -m pytest -q
-```
 
 ## CLI
 
