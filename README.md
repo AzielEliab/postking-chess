@@ -153,3 +153,14 @@ depths live in this Python package. Client sends FEN/state every call.
 
 One-URL catalog: https://aziel-runtime.vibelock.workers.dev/openapi.json
 
+
+## Cite this
+
+Aziel Eliab. Post-King Chess. https://github.com/AzielEliab/postking-chess. https://postking-download-tracker.vibelock.workers.dev. https://doi.org/10.5281/zenodo.21897338.
+
+- Catalog: https://aziel-runtime.vibelock.workers.dev/
+- Worker homepage: https://postking-download-tracker.vibelock.workers.dev/
+- Counted download (gzip HTTP 200, no 302): https://postking-download-tracker.vibelock.workers.dev/download
+- GitHub: https://github.com/AzielEliab/postking-chess
+- Citation JSON: https://postking-download-tracker.vibelock.workers.dev/cite.json
+- DOI: https://doi.org/10.5281/zenodo.21897338
