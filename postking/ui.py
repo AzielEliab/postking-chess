@@ -188,6 +188,15 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, {"played": played, "game": Handler.game.to_dict()})
             return
 
+        if path == "/api/load":
+            try:
+                Handler.game = Game.from_dict(payload)
+            except (KeyError, TypeError, ValueError, GameError) as exc:
+                self._json(400, {"error": str(exc)})
+                return
+            self._json(200, {"game": Handler.game.to_dict()})
+            return
+
         if path == "/api/resign":
             if Handler.game is None:
                 self._json(400, {"error": "no game; start a new game"})

@@ -18,6 +18,35 @@ python -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
 postking ui
 ```
 
+
+## One-click install
+
+```bash
+curl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash
+```
+
+The script curls the **counted** tarball from this project's Worker
+(`/download`, User-Agent `Mozilla/5.0`), extracts, makes a venv, and
+`pip install -e .`. Then run `postking ui`.
+
+Or tap **Download** / **One-click install** on the Worker homepage:
+https://postking-download-tracker.vibelock.workers.dev/
+
+## Counted download (Cloudflare Worker)
+
+**This is the counted download.** GitHub releases exist as a mirror.
+The Worker serves the gzip itself (HTTP 200, no 302 to GitHub).
+
+- Homepage: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
+- Direct tarball: [postking-chess-0.1.0.tar.gz](https://postking-download-tracker.vibelock.workers.dev/download?asset=postking-chess-0.1.0.tar.gz)
+- One-click install: [https://postking-download-tracker.vibelock.workers.dev/install.sh](https://postking-download-tracker.vibelock.workers.dev/install.sh)
+- Skill: [https://postking-download-tracker.vibelock.workers.dev/v1/skill](https://postking-download-tracker.vibelock.workers.dev/v1/skill)
+- OpenAPI: [https://postking-download-tracker.vibelock.workers.dev/openapi.json](https://postking-download-tracker.vibelock.workers.dev/openapi.json)
+- GitHub: [https://github.com/AzielEliab/postking-chess](https://github.com/AzielEliab/postking-chess)
+- Zenodo DOI: [10.5281/zenodo.21897338](https://doi.org/10.5281/zenodo.21897338) · [record](https://zenodo.org/records/21897338)
+
+Isolated counter: Worker `postking-download-tracker`, KV `POSTKING_DOWNLOADS`. `/v1` does not increment downloads.
+
 Open http://127.0.0.1:8844 (loopback only). No CDN, no telemetry.
 
 Counted download: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)

@@ -12,6 +12,10 @@
   let selected = null;
 
   document.getElementById("new-game").addEventListener("click", newGame);
+  var importEl = document.getElementById("import-game");
+  if (importEl) importEl.addEventListener("change", importGame);
+  var exportEl = document.getElementById("export-game");
+  if (exportEl) exportEl.addEventListener("click", exportGame);
   document.getElementById("back-start").addEventListener("click", () => show("start"));
   const resignBtn = document.getElementById("resign");
   if (resignBtn) resignBtn.addEventListener("click", resign);
@@ -32,6 +36,32 @@
     return Number.isFinite(n) ? n : 1;
   }
 
+  async function importGame() {
+    const f = importEl.files && importEl.files[0];
+    if (!f) return;
+    const text = await f.text();
+    let payload;
+    try { payload = JSON.parse(text); } catch (e) { resultLine.textContent = "invalid game.json"; return; }
+    const res = await fetch("/api/load", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) { resultLine.textContent = data.error || "import failed"; return; }
+    game = data.game;
+    show("board");
+    render();
+  }
+  function exportGame() {
+    if (!game) return;
+    const blob = new Blob([JSON.stringify(game, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "game.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
   async function newGame() {
     const res = await fetch("/api/new", {
       method: "POST",

@@ -60,6 +60,20 @@ class Game:
         return cls(board=Board.start(), difficulty=difficulty, seed=int(seed))
 
     @classmethod
+    def from_dict(cls, data: dict) -> "Game":
+        """Restore from game.json / to_dict payload."""
+        src = data.get("game") if isinstance(data.get("game"), dict) else data
+        return cls(
+            board=Board.from_fen(src["fen"]),
+            difficulty=src.get("difficulty", "steward"),
+            seed=int(src.get("seed", 1)),
+            low_influence_streak=int(src.get("low_influence_streak", src.get("streak", 0))),
+            history=list(src.get("history") or []),
+            result=src.get("result"),
+            result_reason=src.get("result_reason"),
+        )
+
+    @classmethod
     def from_fen(
         cls,
         fen: str,
@@ -304,16 +318,7 @@ class Game:
     def load(cls, path: str | Path) -> "Game":
         raw = Path(path).read_text(encoding="utf-8")
         data = json.loads(raw)
-        game = cls(
-            board=Board.from_fen(data["fen"]),
-            difficulty=data.get("difficulty", "steward"),
-            seed=int(data.get("seed", 1)),
-            low_influence_streak=int(data.get("low_influence_streak", 0)),
-            history=list(data.get("history") or []),
-            result=data.get("result"),
-            result_reason=data.get("result_reason"),
-        )
-        return game
+        return cls.from_dict(data)
 
 
 def default_save_path(explicit: str | None = None) -> Path:
