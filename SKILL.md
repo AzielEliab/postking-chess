@@ -48,4 +48,4 @@ Then open http://127.0.0.1:8844 (loopback only).
 Counted download (gzip HTTP 200, no 302): https://postking-download-tracker.vibelock.workers.dev/download?asset=postking-chess-0.1.0.tar.gz
 GitHub: https://github.com/AzielEliab/postking-chess
 
-Paper: DOI https://doi.org/10.5281/zenodo.21897338 · https://zenodo.org/records/21897338 · Apache-2.0. Forks welcome.
+Paper: DOI https://doi.org/10.5281/zenodo.21897338 · https://zenodo.org/records/21897338 · License: CC BY 4.0 (not Apache). Forks welcome.

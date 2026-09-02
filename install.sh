@@ -14,7 +14,7 @@ echo "Downloading counted tarball from ${HOST}/download (User-Agent Mozilla/5.0)
 curl -fsSL -A 'Mozilla/5.0' "${HOST}/download?asset=${ASSET}" -o "${ASSET}"
 
 tar -xzf "${ASSET}"
-DIR="$(find . -maxdepth 1 -type d -name 'postking-chess-*' | head -n 1)"
+DIR="$(find . -maxdepth 1 -type d \( -name 'postking-chess-*' -o -name 'postking_chess-*' \) | head -n 1)"
 if [ -n "${DIR}" ]; then
   cd "${DIR}"
 fi
