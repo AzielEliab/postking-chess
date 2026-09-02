@@ -154,6 +154,15 @@ depths live in this Python package. Client sends FEN/state every call.
 One-URL catalog: https://aziel-runtime.vibelock.workers.dev/openapi.json
 
 
+## Use with Grok / ChatGPT / Venice
+
+Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json
+Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`
+This Worker skill: https://postking-download-tracker.vibelock.workers.dev/v1/skill
+This Worker OpenAPI: https://postking-download-tracker.vibelock.workers.dev/openapi.json
+
+Grok: import the catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions (no auth). Venice: HTTP tools. Always send `User-Agent: Mozilla/5.0`.
+
 ## Cite this
 
 Aziel Eliab. Post-King Chess. https://github.com/AzielEliab/postking-chess. https://postking-download-tracker.vibelock.workers.dev. https://doi.org/10.5281/zenodo.21897338.

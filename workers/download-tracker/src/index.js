@@ -1,4 +1,8 @@
 import * as engine from "./engine.js";
+const EXAMPLE_PAYLOAD = {
+  "difficulty": "steward",
+  "seed": 1
+};
 /**
  * Post-King Chess download tracker (Cloudflare Worker).
  *
@@ -22,7 +26,7 @@ const DEFAULT_BRANCH = "main";
 const GITHUB_RELEASES = "https://github.com/AzielEliab/postking-chess/releases";
 const GITHUB_LATEST = "https://github.com/AzielEliab/postking-chess/releases/latest";
 const HOST = "https://postking-download-tracker.vibelock.workers.dev";
-const SKILL = "---\nname: Post-King Chess\ndescription: Use when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset. Hosted /v1 via this Worker or aziel-runtime. Author Aziel Eliab.\n---\n\n# Post-King Chess\n\nThe goal is not to win. The goal is to remain.\n\nAuthor: **Aziel Eliab**.\n\nUse when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Endpoints (this Worker)\n\nHost: `https://postking-download-tracker.vibelock.workers.dev`\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| POST | `/v1/new` | Start a game. Body: {difficulty, seed}. |\n| POST | `/v1/move` | Play a human UCI move. Returns AI reply. |\n| POST | `/v1/status` | Continuity status for a FEN/state. Stateless. |\n\nOpenAPI: `https://postking-download-tracker.vibelock.workers.dev/openapi.json`\n\nCatalog OpenAPI: `https://aziel-runtime.vibelock.workers.dev/openapi.json`\n\nMCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n\nCatalog aliases under `/p/postking/\u2026`.\n\n## How to call (Mozilla/5.0)\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' -X POST https://postking-download-tracker.vibelock.workers.dev/v1/new \\\n  -H 'content-type: application/json' \\\n  -d '{\"difficulty\":\"steward\",\"seed\":1}'\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/skill\n```\n\nGrok: import the catalog OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash\npostking ui\n```\n\nThen open http://127.0.0.1:8844 (this computer only).\n\n## Honest banner\n\nTHIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.\n\nDOI: https://doi.org/10.5281/zenodo.21897338  \nRecord: https://zenodo.org/records/21897338\n\nLicense: CC BY 4.0 (not Apache). Forks are welcome and always allowed.\n";
+const SKILL = "---\nname: Post-King Chess\ndescription: Use when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset. Hosted /v1 via this Worker or aziel-runtime. Author Aziel Eliab.\n---\n\n# Post-King Chess\n\nThe goal is not to win. The goal is to remain.\n\nAuthor: **Aziel Eliab**.\n\nUse when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Endpoints (this Worker)\n\nHost: `https://postking-download-tracker.vibelock.workers.dev`\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| POST | `/v1/new` | Start a game. Body: {difficulty, seed}. |\n| POST | `/v1/move` | Play a human UCI move. Returns AI reply. |\n| POST | `/v1/status` | Continuity status for a FEN/state. Stateless. |\n\nOpenAPI: `https://postking-download-tracker.vibelock.workers.dev/openapi.json`\n\nCatalog OpenAPI: `https://aziel-runtime.vibelock.workers.dev/openapi.json`\n\nMCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n\nCatalog aliases under `/p/postking/\u2026`.\n\n## How to call (Mozilla/5.0)\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' -X POST https://postking-download-tracker.vibelock.workers.dev/v1/new \\\n  -H 'content-type: application/json' \\\n  -d '{\"difficulty\":\"steward\",\"seed\":1}'\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/skill\n```\n\nGrok: import the catalog OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash\npostking ui\n```\n\nThen open http://127.0.0.1:8844 (this computer only).\n\n## Honest banner\n\nTHIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.\n\nDOI: https://doi.org/10.5281/zenodo.21897338  \nRecord: https://zenodo.org/records/21897338\n\nLicense: CC BY 4.0 (not Apache). Forks are welcome and always allowed.\n\n## Catalog + local UI\n\nAuthor: **Aziel Eliab**. Honest scope: Asymmetric continuity chess. The goal is not to win. The goal is to remain.\n\n- Catalog product: https://aziel-runtime.vibelock.workers.dev/p/postking/\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- This Worker skill: `GET https://postking-download-tracker.vibelock.workers.dev/v1/skill`\n- This Worker OpenAPI: https://postking-download-tracker.vibelock.workers.dev/openapi.json\n- Sample payload: `GET https://postking-download-tracker.vibelock.workers.dev/v1/example`\n\nLocal UI: **Import JSON file** (`type=file`) and **Export JSON**. Then `postking doctor`.\n\nGrok: import catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n";
 
 const GITHUB_REPO = "https://github.com/AzielEliab/postking-chess";
 const INSTALL_LINE = "curl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash";
@@ -458,6 +462,7 @@ function openapiSpec(request) {
     servers: [{ url: origin }],
     paths: {
       
+            "/v1/example": { get: { operationId: "postkingExample", summary: "Sample JSON payload. Does not increment downloads.", responses: { "200": { description: "OK" } } } },
       "/v1/skill": {
         get: {
           operationId: "postking_skill",
@@ -526,7 +531,7 @@ async function handleRuntime(request, url) {
   const path = url.pathname.replace(/\/+$/, "") || "/";
   if (path === "/v1/health" && request.method === "GET") {
     return json({
-      ok: true,
+      ok: true, author: "Aziel Eliab",
       product: "postking",
       runtime: true,
       kv_increment: false,
@@ -534,6 +539,16 @@ async function handleRuntime(request, url) {
       subset: "1-ply continuity AI; full legal-move kernel",
     });
   }
+  if ((path === "/v1/example" || path === "/v1/example/") && (request.method === "GET" || request.method === "HEAD")) {
+    return json({
+      ok: true,
+      product: "postking",
+      author: "Aziel Eliab",
+      example: EXAMPLE_PAYLOAD,
+      note: "Sample payload only. Does not increment downloads.",
+    });
+  }
+
   if (path === "/v1/skill" && request.method === "GET") {
     return new Response(SKILL, {
       status: 200,
