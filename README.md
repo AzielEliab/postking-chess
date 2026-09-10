@@ -41,6 +41,7 @@ The Worker serves the gzip itself (HTTP 200, no 302 to GitHub).
 - Direct tarball: [postking-chess-0.1.0.tar.gz](https://postking-download-tracker.vibelock.workers.dev/download?asset=postking-chess-0.1.0.tar.gz)
 - One-click install: [https://postking-download-tracker.vibelock.workers.dev/install.sh](https://postking-download-tracker.vibelock.workers.dev/install.sh)
 - Skill: [https://postking-download-tracker.vibelock.workers.dev/v1/skill](https://postking-download-tracker.vibelock.workers.dev/v1/skill)
+- Suite mesh proxy: [https://postking-download-tracker.vibelock.workers.dev/v1/mesh](https://postking-download-tracker.vibelock.workers.dev/v1/mesh) — default OFF; QNM live / locked / isolated; **QNS-CD-1.0** cross-map
 - OpenAPI: [https://postking-download-tracker.vibelock.workers.dev/openapi.json](https://postking-download-tracker.vibelock.workers.dev/openapi.json)
 - GitHub: [https://github.com/AzielEliab/postking-chess](https://github.com/AzielEliab/postking-chess)
 - Zenodo DOI: [10.5281/zenodo.21897338](https://doi.org/10.5281/zenodo.21897338) · [record](https://zenodo.org/records/21897338)
@@ -134,6 +135,14 @@ If it cannot continue without you, it was not redeemed.
 Parent ships. Isolated counter: Worker `postking-download-tracker`,
 project `postking`.
 
+Suite mesh `/v1/mesh/*` PROXY via `AZIEL_RUNTIME` (default **OFF**;
+QNM-BUILD-1.0 live|locked|isolated; no Node Gate). Catalog MCP `mesh_*`
++ FragGate `slug=mesh`. **QNS-CD-1.0** (photon QNS1 packet transfer) is
+a hub cite / Worker mesh cross-map only — not a Softwares-tab product.
+Local `qnsd` lives in [qnm-node](https://github.com/AzielEliab/qnm-node).
+Runtime cites + catalog field: [aziel-runtime](https://github.com/AzielEliab/aziel-runtime).
+AZInterface holds pair custody. No public qnsd proxy. Identity: Aziel Eliab only.
+
 ## AI runtime
 
 Stateless board API. Human is king-bound; AI has a **Node**, not a king.
@@ -143,6 +152,8 @@ Worker subset: legal-move kernel + **1-ply** continuity AI (lowest
 decisiveness, then survivability). Full Witness/Steward/Remain search
 depths live in this Python package. Client sends FEN/state every call.
 
+- `GET https://postking-download-tracker.vibelock.workers.dev/v1/health`
+- `GET https://postking-download-tracker.vibelock.workers.dev/v1/mesh` — PROXY suite mesh status (default OFF; QNM-BUILD-1.0 + QNS-CD-1.0)
 - `POST https://postking-download-tracker.vibelock.workers.dev/v1/new` `{difficulty, seed}`
 - `POST https://postking-download-tracker.vibelock.workers.dev/v1/move` `{fen_or_state, uci}`
 - `POST https://postking-download-tracker.vibelock.workers.dev/v1/status` `{state}`
@@ -153,6 +164,23 @@ depths live in this Python package. Client sends FEN/state every call.
 
 One-URL catalog: https://aziel-runtime.vibelock.workers.dev/openapi.json
 
+## Mesh (hub cite / Worker cross-map)
+
+Suite mesh `/v1/mesh/*` PROXY to aziel-runtime via `AZIEL_RUNTIME`. Default **OFF**.
+QNM-BUILD-1.0 live|locked|isolated. GET never enables. No Node Gate. No auto-heal.
+
+**QNS-CD-1.0** (photon QNS1 packet transfer) is a hub cite / Worker mesh
+cross-map only — **not** a Softwares-tab product. This Worker does **not**
+implement `qnsd` and does **not** expose a public qnsd proxy.
+
+| Cite | Where |
+|------|--------|
+| Local `qnsd` | [AzielEliab/qnm-node](https://github.com/AzielEliab/qnm-node) |
+| Runtime cites + catalog field | [AzielEliab/aziel-runtime](https://github.com/AzielEliab/aziel-runtime) · [NODE_MESH.md](https://github.com/AzielEliab/aziel-runtime/blob/main/docs/NODE_MESH.md) · [QNM-WP-1.0](https://github.com/AzielEliab/aziel-runtime/blob/main/docs/designs/QNM-WP-1.0.md) |
+| Pair custody | [AzielEliab/azinterface](https://github.com/AzielEliab/azinterface) |
+
+Identity: **Aziel Eliab** only.
+
 
 ## Use with Grok / ChatGPT / Venice
 
@@ -160,6 +188,7 @@ Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json
 Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`
 This Worker skill: https://postking-download-tracker.vibelock.workers.dev/v1/skill
 This Worker OpenAPI: https://postking-download-tracker.vibelock.workers.dev/openapi.json
+Suite mesh `/v1/mesh/*` PROXY via `AZIEL_RUNTIME` (default OFF; QNM-BUILD-1.0 live|locked|isolated; QNS-CD-1.0 cross-map; no Node Gate). Catalog MCP `mesh_*` + FragGate `slug=mesh`.
 
 Grok: import the catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions (no auth). Venice: HTTP tools. Always send `User-Agent: Mozilla/5.0`.
 
