@@ -1,4 +1,5 @@
 import * as engine from "./engine.js";
+import { handleMeshApi, meshOpenApiPaths, meshPointer, QNS_CD_SPEC } from "./mesh.js";
 const EXAMPLE_PAYLOAD = {
   "difficulty": "steward",
   "seed": 1
@@ -16,6 +17,8 @@ const EXAMPLE_PAYLOAD = {
  * CORS *. No secrets in this tree.
  * Isolated counter: Worker postking-download-tracker, project postking.
  * Standalone. Not mixed with any other product.
+ * /v1, /v1/mesh/* do not increment. Suite mesh PROXY via AZIEL_RUNTIME.
+ * QNS-CD-1.0 is a hub cite / Worker mesh cross-map only.
  */
 
 const PROJECT = "postking";
@@ -26,7 +29,7 @@ const DEFAULT_BRANCH = "main";
 const GITHUB_RELEASES = "https://github.com/AzielEliab/postking-chess/releases";
 const GITHUB_LATEST = "https://github.com/AzielEliab/postking-chess/releases/latest";
 const HOST = "https://postking-download-tracker.vibelock.workers.dev";
-const SKILL = "---\nname: Post-King Chess\ndescription: Use when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset. Hosted /v1 via this Worker or aziel-runtime. Author Aziel Eliab.\n---\n\n# Post-King Chess\n\nThe goal is not to win. The goal is to remain.\n\nAuthor: **Aziel Eliab**.\n\nUse when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Endpoints (this Worker)\n\nHost: `https://postking-download-tracker.vibelock.workers.dev`\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| POST | `/v1/new` | Start a game. Body: {difficulty, seed}. |\n| POST | `/v1/move` | Play a human UCI move. Returns AI reply. |\n| POST | `/v1/status` | Continuity status for a FEN/state. Stateless. |\n\nOpenAPI: `https://postking-download-tracker.vibelock.workers.dev/openapi.json`\n\nCatalog OpenAPI: `https://aziel-runtime.vibelock.workers.dev/openapi.json`\n\nMCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n\nCatalog aliases under `/p/postking/\u2026`.\n\n## How to call (Mozilla/5.0)\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' -X POST https://postking-download-tracker.vibelock.workers.dev/v1/new \\\n  -H 'content-type: application/json' \\\n  -d '{\"difficulty\":\"steward\",\"seed\":1}'\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/skill\n```\n\nGrok: import the catalog OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash\npostking ui\n```\n\nThen open http://127.0.0.1:8844 (this computer only).\n\n## Honest banner\n\nTHIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.\n\nDOI: https://doi.org/10.5281/zenodo.21897338  \nRecord: https://zenodo.org/records/21897338\n\nLicense: CC BY 4.0 (not Apache). Forks are welcome and always allowed.\n\n## Catalog + local UI\n\nAuthor: **Aziel Eliab**. Honest scope: Asymmetric continuity chess. The goal is not to win. The goal is to remain.\n\n- Catalog product: https://aziel-runtime.vibelock.workers.dev/p/postking/\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- This Worker skill: `GET https://postking-download-tracker.vibelock.workers.dev/v1/skill`\n- This Worker OpenAPI: https://postking-download-tracker.vibelock.workers.dev/openapi.json\n- Sample payload: `GET https://postking-download-tracker.vibelock.workers.dev/v1/example`\n\nLocal UI: **Import JSON file** (`type=file`) and **Export JSON**. Then `postking doctor`.\n\nGrok: import catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n";
+const SKILL = "---\nname: Post-King Chess\ndescription: Use when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset. Hosted /v1 via this Worker or aziel-runtime. This Worker /v1/mesh/* PROXY to aziel-runtime via AZIEL_RUNTIME. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. QNS-CD-1.0 (photon QNS1) hub cite / Worker mesh cross-map only. No Node Gate. No public qnsd proxy. Author Aziel Eliab.\n---\n\n# Post-King Chess\n\nThe goal is not to win. The goal is to remain.\n\nAuthor: **Aziel Eliab**.\n\nUse when playing or explaining Post-King Chess (asymmetric continuity; Node not a king). Hosted AI is a 1-ply subset.\n\nAlways send `User-Agent: Mozilla/5.0`. Cloudflare Workers may 403 an empty agent.\n\n## Endpoints (this Worker)\n\nHost: `https://postking-download-tracker.vibelock.workers.dev`\n\n| Method | Path | What |\n|--------|------|------|\n| GET | `/v1/health` | Liveness. Does not increment downloads. |\n| GET | `/v1/skill` | This markdown. Does not increment downloads. |\n| GET | `/v1/mesh` | PROXY suite mesh status. Default OFF. QNM-BUILD-1.0 + QNS-CD-1.0 (photon QNS1). Never enables. |\n| GET | `/v1/mesh/nodes` | PROXY Live Nodes roster (5-minute presence). QNS-CD-1.0 cross-map included. |\n| POST | `/v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` | PROXY. Bearer required to enable. No Node Gate. No public qnsd proxy. |\n| POST | `/v1/new` | Start a game. Body: {difficulty, seed}. |\n| POST | `/v1/move` | Play a human UCI move. Returns AI reply. |\n| POST | `/v1/status` | Continuity status for a FEN/state. Stateless. |\n\nOpenAPI: `https://postking-download-tracker.vibelock.workers.dev/openapi.json`\n\nCatalog OpenAPI: `https://aziel-runtime.vibelock.workers.dev/openapi.json`\n\nMCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n\nCatalog aliases under `/p/postking/\u2026`.\n\n## How to call (Mozilla/5.0)\n\n```bash\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/health\ncurl -s -A 'Mozilla/5.0' -X POST https://postking-download-tracker.vibelock.workers.dev/v1/new \\\n  -H 'content-type: application/json' \\\n  -d '{\"difficulty\":\"steward\",\"seed\":1}'\ncurl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/skill\n```\n\nGrok: import the catalog OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n\n## Local (after one-click install)\n\n```bash\ncurl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash\npostking ui\n```\n\nThen open http://127.0.0.1:8844 (this computer only).\n\n## Honest banner\n\nTHIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.\n\nDOI: https://doi.org/10.5281/zenodo.21897338  \nRecord: https://zenodo.org/records/21897338\n\nLicense: CC BY 4.0 (not Apache). Forks are welcome and always allowed.\n\n## Catalog + local UI\n\nAuthor: **Aziel Eliab**. Honest scope: Asymmetric continuity chess. The goal is not to win. The goal is to remain.\n\n- Catalog product: https://aziel-runtime.vibelock.workers.dev/p/postking/\n- Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json\n- Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`\n- This Worker skill: `GET https://postking-download-tracker.vibelock.workers.dev/v1/skill`\n- This Worker OpenAPI: https://postking-download-tracker.vibelock.workers.dev/openapi.json\n- Sample payload: `GET https://postking-download-tracker.vibelock.workers.dev/v1/example`\n\nLocal UI: **Import JSON file** (`type=file`) and **Export JSON**. Then `postking doctor`.\n\nWorker homepage Live Nodes strip polls `GET /v1/mesh` (default OFF). Suite mesh `/v1/mesh/*` PROXY via `AZIEL_RUNTIME`. QNM-BUILD-1.0 live|locked|isolated. **QNS-CD-1.0** (photon QNS1 packet transfer) is a hub cite / Worker mesh cross-map only — not a Softwares-tab product. Local qnsd is https://github.com/AzielEliab/qnm-node. Runtime cites: https://github.com/AzielEliab/aziel-runtime. Pair custody: AZInterface. No Node Gate. No public qnsd proxy. No auto-heal. Not anonymity. Author Aziel Eliab.\n\nGrok: import catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.\n";
 
 const GITHUB_REPO = "https://github.com/AzielEliab/postking-chess";
 const INSTALL_LINE = "curl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash";
@@ -37,8 +40,8 @@ const ZENODO = "https://zenodo.org/records/21897338";
 function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Accept, Authorization, X-Aziel-Runtime-Token, User-Agent",
   };
 }
 
@@ -373,11 +376,33 @@ async function indexHtml(env) {
   .cite h2 { font-size: 1.05rem; margin: 0 0 .4rem; }
   .cite p { color: #c5ccd8; font-size: .95rem; }
   .cite a { color: #c9d4ff; }
+  #meshStrip { border: 1px solid #c9a227; border-radius: 12px; padding: .85rem 1rem; background: #101010; margin: 0 0 1.2rem; display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; font-size: .88rem; color: #9aa3b2; }
+  #meshStrip .live { color: #e8eaef; }
+  #meshStrip .live b { color: #c9a227; font-size: 1.35rem; margin-right: .35rem; }
+  #meshStrip .rollup b { color: #c9a227; }
+  #meshStrip button { font: 700 .78rem/1 ui-monospace, Menlo, Consolas, monospace; height: 2rem; padding: 0 .75rem; border-radius: 8px; background: #101010; color: #e8eaef; border: 1px solid #c9a227; cursor: pointer; }
+  #meshStrip button:hover { background: #241c0d; color: #c9a227; }
+  #meshStrip input { width: 10rem; padding: .4rem .55rem; border: 1px solid #c9a227; border-radius: 8px; background: #0e0e0e; color: #e8eaef; font: inherit; }
+  #meshProducts { flex-basis: 100%; margin: 0; }
 </style>
 <body>
   <h1>Post-King Chess</h1>
   <p class="motto">The goal is not to win. The goal is to remain. Author Aziel Eliab.</p>
   <p class="banner">THIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.</p>
+  <div id="meshStrip" aria-label="Suite Live Nodes">
+    <div class="live"><b id="meshLiveCount">0</b> Live Nodes</div>
+    <div id="meshLine">Suite mesh: off (default). QNM-BUILD-1.0 · QNS-CD-1.0. Not an anonymity network.</div>
+    <div class="rollup">live <b id="qnmLive">0</b> · locked <b id="qnmLocked">0</b> · isolated <b id="qnmIsolated">0</b></div>
+    <div>No Node Gate · No public qnsd proxy · No auto-heal · Aziel Eliab only</div>
+    <div>
+      <input id="meshBearer" type="text" maxlength="80" placeholder="bearer (required to enable)" aria-label="mesh bearer">
+      <button id="meshEnable" type="button" title="Enable suite mesh. Declared bearer required. Default off.">Enable</button>
+      <button id="meshDisable" type="button" title="Disable suite mesh (always allowed)">Disable</button>
+      <button id="meshJoin" type="button" title="Join as postking. Refused while mesh is OFF. No auto-join.">Join</button>
+      <button id="meshLeave" type="button" title="Leave this node. No auto-heal.">Leave</button>
+    </div>
+    <p id="meshProducts">Catalog MCP mesh_* · FragGate slug=mesh · /v1/mesh/* PROXY · QNS-CD-1.0 cross-map · not a Softwares-tab product · not AnonBroadcast · not AZMail ring · not a Node Gate · no public qnsd proxy</p>
+  </div>
   <div class="card">
     <div class="nums">
       <p class="count">${v}<span>Views</span></p>
@@ -394,7 +419,7 @@ async function indexHtml(env) {
     <p class="iso">Isolated counter: Worker <code>postking-download-tracker</code>, project <code>${PROJECT}</code>, KV <code>POSTKING_DOWNLOADS</code>. Not mixed with any other product. /v1 does not increment downloads.</p>
     <p class="meta">GitHub: stars ${gh.stars || 0} · forks ${gh.forks || 0} · watchers ${gh.watchers || 0} · release assets ${gh.release_download_count || 0}</p>
     <p class="meta">Paper: <a href="${DOI}">doi:10.5281/zenodo.21897338</a> · <a href="${ZENODO}">Zenodo</a> · CC BY 4.0 · Eliab, Aziel</p>
-    <p class="meta"><a href="/stats">JSON stats</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/skill">Skill</a> · <a href="/ai">AI runtime</a> · <a href="${GITHUB_REPO}">GitHub</a> · <a href="${GITHUB_LATEST}">releases</a></p>
+    <p class="meta"><a href="/stats">JSON stats</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/mesh">/v1/mesh</a> · <a href="/v1/skill">Skill</a> · <a href="/ai">AI runtime</a> · <a href="${GITHUB_REPO}">GitHub</a> · <a href="${GITHUB_LATEST}">releases</a></p>
     <script>
       (function () {
         var cmd = "curl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash";
@@ -420,6 +445,107 @@ async function indexHtml(env) {
           }
         });
       })();
+      (function () {
+      function $(id) { return document.getElementById(id); }
+      function meshNum() {
+        for (var i = 0; i < arguments.length; i++) {
+          var raw = arguments[i];
+          if (raw == null || raw === "") continue;
+          var n = typeof raw === "number" ? raw : Number(String(raw).replace(/,/g, ""));
+          if (Number.isFinite(n) && n >= 0) return Math.floor(n);
+        }
+        return 0;
+      }
+      function unwrapMesh(j) {
+        if (!j || typeof j !== "object") return {};
+        if (j.result && typeof j.result === "object") return Object.assign({}, j, j.result);
+        if (j.mesh && typeof j.mesh === "object") return Object.assign({}, j, j.mesh);
+        return j;
+      }
+      function paintMesh(raw) {
+        var j = unwrapMesh(raw);
+        var on = j.enabled === true || j.enabled === 1 || String(j.status || "").toLowerCase() === "on";
+        var r = (j.rollup && typeof j.rollup === "object") ? j.rollup : {};
+        var live = on ? meshNum(r.live, j.live_nodes, j.live) : 0;
+        var locked = on ? meshNum(r.locked, j.locked_nodes, j.locked) : 0;
+        var isolated = on ? meshNum(r.isolated, j.isolated_nodes, j.isolated) : 0;
+        $("meshLiveCount").textContent = String(live);
+        $("qnmLive").textContent = String(live);
+        $("qnmLocked").textContent = String(locked);
+        $("qnmIsolated").textContent = String(isolated);
+        var line = $("meshLine");
+        if (on) line.textContent = "Suite mesh: on · live " + live + " · locked " + locked + " · isolated " + isolated + ". QNS-CD-1.0. Not an anonymity network.";
+        else if (j.status === "unavailable" || (j.ok === false && j.error)) line.textContent = "Suite mesh: off (unavailable). QNM-BUILD-1.0 · QNS-CD-1.0. Not an anonymity network.";
+        else line.textContent = "Suite mesh: off (default). QNM-BUILD-1.0 · QNS-CD-1.0. Not an anonymity network.";
+        var products = j.products_present || j.products || [];
+        var names = Array.isArray(products) ? products.map(function (p) { return typeof p === "string" ? p : (p && (p.product || p.slug)) || ""; }).filter(Boolean) : [];
+        var nodes = Array.isArray(j.nodes) ? j.nodes : [];
+        var extra = names.length ? " · products " + names.join(", ") : (nodes.length ? " · " + nodes.length + " node labels" : "");
+        var qns = (j.qns_cd && j.qns_cd.spec) || j.qns_cd_spec || "QNS-CD-1.0";
+        $("meshProducts").textContent = "Catalog MCP mesh_* · FragGate slug=mesh · /v1/mesh/* PROXY · " + qns + " cross-map · not a Softwares-tab product · not AnonBroadcast · not AZMail ring · not a Node Gate · no public qnsd proxy" + extra;
+      }
+      async function meshGet(path) {
+        var r = await fetch(path, { headers: { "user-agent": "Mozilla/5.0", accept: "application/json" } });
+        return r.json();
+      }
+      async function meshPost(path, payload) {
+        var r = await fetch(path, { method: "POST", headers: { "content-type": "application/json", "user-agent": "Mozilla/5.0" }, body: JSON.stringify(payload || {}) });
+        return r.json();
+      }
+      async function refreshMesh() {
+        try {
+          var status = await meshGet("/v1/mesh");
+          var merged = status;
+          var inner = unwrapMesh(status);
+          var on = inner.enabled === true;
+          if (on) {
+            try {
+              var nodes = await meshGet("/v1/mesh/nodes");
+              merged = Object.assign({}, inner, unwrapMesh(nodes));
+            } catch (e) { /* status is enough */ }
+          }
+          paintMesh(merged);
+          var nodeId = sessionStorage.getItem("postking_mesh_node");
+          if (on && nodeId) {
+            try { await meshPost("/v1/mesh/heartbeat", { node_id: nodeId }); } catch (e) { /* no auto-heal */ }
+          }
+        } catch (e) {
+          paintMesh({ ok: false, enabled: false, status: "unavailable", error: "mesh_unavailable" });
+        }
+      }
+      $("meshEnable").onclick = async function () {
+        var bearer = ($("meshBearer").value || "").trim();
+        paintMesh(await meshPost("/v1/mesh/enable", bearer ? { bearer: bearer } : {}));
+        refreshMesh();
+      };
+      $("meshDisable").onclick = async function () {
+        sessionStorage.removeItem("postking_mesh_node");
+        paintMesh(await meshPost("/v1/mesh/disable", {}));
+        refreshMesh();
+      };
+      $("meshJoin").onclick = async function () {
+        var j = await meshPost("/v1/mesh/join", { product: "postking", label: "Post-King Chess Worker" });
+        var inner = unwrapMesh(j);
+        var id = inner.node_id || inner.id || (inner.session && inner.session.node_id);
+        if (id) sessionStorage.setItem("postking_mesh_node", String(id));
+        paintMesh(j);
+        refreshMesh();
+      };
+      $("meshLeave").onclick = async function () {
+        var id = sessionStorage.getItem("postking_mesh_node");
+        if (id) await meshPost("/v1/mesh/leave", { node_id: id });
+        sessionStorage.removeItem("postking_mesh_node");
+        refreshMesh();
+      };
+      window.addEventListener("pagehide", function () {
+        var id = sessionStorage.getItem("postking_mesh_node");
+        if (!id || typeof navigator.sendBeacon !== "function") return;
+        try { navigator.sendBeacon("/v1/mesh/leave", new Blob([JSON.stringify({ node_id: id })], { type: "application/json" })); } catch (e) { /* leave expires in 5 minutes */ }
+      });
+      refreshMesh();
+      setInterval(refreshMesh, 30000);
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) refreshMesh(); });
+    })();
     </script>
     <h2>Per repo / branch / fork</h2>
     <ul>${breakdown}</ul>
@@ -461,7 +587,7 @@ function openapiSpec(request) {
     },
     servers: [{ url: origin }],
     paths: {
-      
+      ...meshOpenApiPaths(),
             "/v1/example": { get: { operationId: "postkingExample", summary: "Sample JSON payload. Does not increment downloads.", responses: { "200": { description: "OK" } } } },
       "/v1/skill": {
         get: {
@@ -537,6 +663,8 @@ async function handleRuntime(request, url) {
       kv_increment: false,
       motto: engine.MOTTO,
       subset: "1-ply continuity AI; full legal-move kernel",
+      mesh: meshPointer(),
+      qns_cd_spec: QNS_CD_SPEC,
     });
   }
   if ((path === "/v1/example" || path === "/v1/example/") && (request.method === "GET" || request.method === "HEAD")) {
@@ -593,7 +721,7 @@ async function handleRuntime(request, url) {
     }
   }
   if (path.startsWith("/v1/") || path === "/v1") {
-    return json({ error: "not found", hint: "GET /v1/health GET /v1/skill POST /v1/new /v1/move /v1/status", motto: engine.MOTTO }, 404);
+    return json({ error: "not found", hint: "GET /v1/health GET /v1/skill GET /v1/mesh POST /v1/new /v1/move /v1/status", motto: engine.MOTTO }, 404);
   }
   return null;
 }
@@ -605,6 +733,9 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
+
+    const mesh = await handleMeshApi(request, url, env);
+    if (mesh) return mesh;
 
     if ((url.pathname === "/install.sh" || url.pathname === "/install.sh/") && request.method === "GET") {
       return new Response(installScript(), {
@@ -688,7 +819,7 @@ export default {
       });
     }
     if ((url.pathname === "/sitemap.xml" || url.pathname === "/sitemap.xml/") && request.method === "GET") {
-      const locs = [HOST + "/", HOST + "/download", HOST + "/install.sh", HOST + "/v1/skill", HOST + "/openapi.json", GITHUB_REPO];
+      const locs = [HOST + "/", HOST + "/download", HOST + "/install.sh", HOST + "/v1/skill", HOST + "/v1/mesh", HOST + "/openapi.json", GITHUB_REPO];
       const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + locs.map((u) => "  <url><loc>" + u + "</loc></url>").join("\n")
         + "\n</urlset>\n";

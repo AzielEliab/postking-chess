@@ -1,6 +1,6 @@
 ---
 name: Post-King Chess
-description: Use when calling Post-King Chess hosted /v1 or installing the local package. Author Aziel Eliab.
+description: Use when calling Post-King Chess hosted /v1 or installing the local package. This Worker /v1/mesh/* PROXY to aziel-runtime via AZIEL_RUNTIME. Suite mesh default OFF. QNM-BUILD-1.0 live|locked|isolated. QNS-CD-1.0 (photon QNS1) hub cite / Worker mesh cross-map only. No Node Gate. No public qnsd proxy. Author Aziel Eliab.
 ---
 
 # Post-King Chess
@@ -24,6 +24,9 @@ Ops (do **not** increment downloads or views):
 
 - `GET /v1/health` — liveness
 - `GET /v1/skill` — this file
+- `GET /v1/mesh` — PROXY suite mesh status. Default OFF. QNM-BUILD-1.0 + QNS-CD-1.0 (photon QNS1). Never enables.
+- `GET /v1/mesh/nodes` — PROXY Live Nodes roster (5-minute presence). QNS-CD-1.0 cross-map included.
+- `POST /v1/mesh/{enable,disable,join,heartbeat,leave,broadcast}` — PROXY. Bearer required to enable. No Node Gate. No public qnsd proxy.
 - Product POSTs listed in OpenAPI
 
 Grok: import OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.
@@ -33,6 +36,7 @@ Grok: import OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.
 ```bash
 curl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/health
 curl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/skill
+curl -s -A 'Mozilla/5.0' https://postking-download-tracker.vibelock.workers.dev/v1/mesh
 ```
 
 ## Local (after one-click install)
@@ -62,5 +66,7 @@ Author: **Aziel Eliab**. Honest scope: Asymmetric continuity chess. The goal is 
 - Sample payload: `GET https://postking-download-tracker.vibelock.workers.dev/v1/example`
 
 Local UI: **Import JSON file** (`type=file`) and **Export JSON**. Then `postking doctor`.
+
+Worker homepage Live Nodes strip polls `GET /v1/mesh` (default OFF). Suite mesh `/v1/mesh/*` PROXY via `AZIEL_RUNTIME`. QNM-BUILD-1.0 live|locked|isolated. **QNS-CD-1.0** (photon QNS1 packet transfer) is a hub cite / Worker mesh cross-map only — not a Softwares-tab product. Local qnsd is https://github.com/AzielEliab/qnm-node. Runtime cites: https://github.com/AzielEliab/aziel-runtime. Pair custody: AZInterface. No Node Gate. No public qnsd proxy. No auto-heal. Not anonymity. Author Aziel Eliab.
 
 Grok: import catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions. Venice: HTTP tools.
