@@ -89,8 +89,9 @@ def test_index_routes_mesh_before_runtime_catchall() -> None:
     assert "meshPointer" in INDEX
     assert "...meshOpenApiPaths()" in INDEX
     assert "mesh: meshPointer()" in INDEX
-    mesh_idx = INDEX.index("handleMeshApi(request, url, env)")
-    runtime_idx = INDEX.index("handleRuntime(request, url)")
+    fetch_idx = INDEX.index("async fetch(request, env)")
+    mesh_idx = INDEX.index("handleMeshApi(request, url, env)", fetch_idx)
+    runtime_idx = INDEX.index("handleRuntime(request, url)", fetch_idx)
     assert mesh_idx < runtime_idx
     not_found = INDEX.rindex('return json({ error: "not found" }, 404)')
     assert mesh_idx < not_found
