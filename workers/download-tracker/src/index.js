@@ -384,8 +384,11 @@ async function indexHtml(env) {
   #meshStrip button:hover { background: #241c0d; color: #c9a227; }
   #meshStrip input { width: 10rem; padding: .4rem .55rem; border: 1px solid #c9a227; border-radius: 8px; background: #0e0e0e; color: #e8eaef; font: inherit; }
   #meshProducts { flex-basis: 100%; margin: 0; }
+  .brandrow{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 10px}
+  .brandmark{width:40px;height:40px;border-radius:10px;object-fit:cover;flex:0 0 auto;box-shadow:0 0 0 1px #d4af3733}
 </style>
 <body>
+  <div class="brandrow"><img class="brandmark" src="/sigil.png" width="40" height="40" alt="" decoding="async"></div>
   <h1>Post-King Chess</h1>
   <p class="motto">The goal is not to win. The goal is to remain. Author Aziel Eliab.</p>
   <p class="banner">THIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.</p>
@@ -637,8 +640,11 @@ function aiHelpPage(request) {
   code, pre { background: #151922; padding: .15rem .35rem; border-radius: 4px; }
   pre { padding: .85rem 1rem; overflow: auto; }
   .banner { border: 1px solid #5c4a1a; background: #241c0d; color: #f0d78c; padding: .85rem 1rem; border-radius: 8px; }
+  .brandrow{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 10px}
+  .brandmark{width:40px;height:40px;border-radius:10px;object-fit:cover;flex:0 0 auto;box-shadow:0 0 0 1px #d4af3733}
 </style>
 <body>
+<div class="brandrow"><img class="brandmark" src="/sigil.png" width="40" height="40" alt="" decoding="async"></div>
 <h1>Post-King Chess runtime</h1>
 <p class="banner">${engine.MOTTO} Human is king-bound. AI has a Node, not a king. Capture of the Node is not an ending.</p>
 <p>Stateless: send board state on every call. Worker AI is a <strong>1-ply subset</strong> (legal moves + continuity ranking). Full Python search lives in the package.</p>
