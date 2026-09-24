@@ -27,6 +27,6 @@ python -m pip install -e .
 
 echo
 echo "Installed Post-King Chess."
-echo "Run:  postking ui"
-echo "Then open http://127.0.0.1:8844  (loopback only)"
+echo "1. postking ui"
+echo "2. Open http://127.0.0.1:8844/"
 echo "Author: Aziel Eliab."

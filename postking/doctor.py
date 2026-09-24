@@ -96,4 +96,6 @@ def run_doctor(*, as_json: bool = False) -> int:
         print(json.dumps(payload, indent=2))
     else:
         print("doctor", "passed" if failed == 0 else "failed")
+        if failed:
+            print("Try: postking doctor --json")
     return 0 if failed == 0 else 1

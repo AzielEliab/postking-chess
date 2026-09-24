@@ -17,7 +17,9 @@ class PostKingApp extends StatelessWidget {
     return MaterialApp(
       title: 'Post-King Chess',
       debugShowCheckedModeBanner: false,
-      theme: buildAppTheme(),
+      theme: buildAppTheme(brightness: Brightness.light),
+      darkTheme: buildAppTheme(brightness: Brightness.dark),
+      themeMode: ThemeMode.system,
       home: const BoardPage(),
     );
   }
@@ -83,6 +85,10 @@ class _BoardPageState extends State<BoardPage> {
             .where((m) => m.src == _selected)
             .map((m) => m.dst)
             .toSet();
+    final darkBoard = Theme.of(context).brightness == Brightness.dark;
+    final lightSq = darkBoard ? const Color(0xFF2A2A2A) : const Color(0xFFE7E0D2);
+    final darkSq = darkBoard ? const Color(0xFF1A1A1A) : const Color(0xFFCFC6B4);
+    final humanInk = darkBoard ? kIvory : const Color(0xFF1C1914);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Post-King Chess'),
@@ -112,42 +118,28 @@ class _BoardPageState extends State<BoardPage> {
                   ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'witness', label: Text('Witness')),
-                ButtonSegment(value: 'steward', label: Text('Steward')),
-                ButtonSegment(value: 'remain', label: Text('Remain')),
-              ],
-              selected: {_diff},
-              onSelectionChanged: (s) {
-                _diff = s.first;
-                _newGame();
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              '${cfg.label}  N=${cfg.n} M=${cfg.m} infl=${cfg.threshold}  ·  '
-              'clusters ${clusterCount(board)}  infl ${influence(board).toStringAsFixed(2)}  '
-              'streak ${_game.lowInfluenceStreak}',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text('You keep a king. The other side tries to remain.'),
           ),
           if (_game.result != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(
                 _game.result == 'human'
-                    ? 'Continuity Collapse. ${_game.resultReason}'
-                    : 'Human lost. ${_game.resultReason}',
+                    ? 'Continuity collapse. The other side did not remain.'
+                    : 'Your king fell. ${_game.resultReason}',
                 style: const TextStyle(color: kGold, fontWeight: FontWeight.w600),
               ),
             ),
           if (_hint != null)
-            Text(_hint!, style: const TextStyle(color: Color(0xFFB54A4A))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Text(
+                _hint!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
           Expanded(
             child: Center(
               child: AspectRatio(
@@ -169,30 +161,29 @@ class _BoardPageState extends State<BoardPage> {
                       final p = board.squares[sq];
                       final sel = _selected == sq;
                       final dest = dests.contains(sq);
-                      return GestureDetector(
-                        onTap: () => _tapSquare(sq),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: sel
-                                ? const Color(0x55C9A227)
-                                : dest
-                                    ? const Color(0x332E6B4A)
-                                    : (dark
-                                    ? const Color(0xFF1A1A1A)
-                                    : const Color(0xFF2A2A2A)),
-                            border: Border.all(
-                              color: const Color(0x33C9A227),
-                              width: 0.5,
+                      return Material(
+                        color: sel
+                            ? const Color(0x55C9A227)
+                            : dest
+                                ? const Color(0x332E6B4A)
+                                : (dark ? darkSq : lightSq),
+                        child: InkWell(
+                          onTap: () => _tapSquare(sq),
+                          focusColor: const Color(0x88C9A227),
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: const Color(0x33C9A227),
+                                width: 0.5,
+                              ),
                             ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            p?.glyph ?? '',
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: p != null && p.kind == node
-                                  ? kGold
-                                  : kIvory,
+                            child: Text(
+                              p?.glyph ?? '',
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: p != null && p.kind == node ? kGold : humanInk,
+                              ),
                             ),
                           ),
                         ),
@@ -204,11 +195,45 @@ class _BoardPageState extends State<BoardPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: OutlinedButton(
-              onPressed: _newGame,
-              child: const Text('New game'),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: _game.gameOver
+                  ? FilledButton(onPressed: _newGame, child: const Text('New game'))
+                  : TextButton(onPressed: _newGame, child: const Text('New game')),
             ),
+          ),
+          ExpansionTile(
+            title: const Text('Advanced'),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'witness', label: Text('Witness')),
+                        ButtonSegment(value: 'steward', label: Text('Steward')),
+                        ButtonSegment(value: 'remain', label: Text('Remain')),
+                      ],
+                      selected: {_diff},
+                      onSelectionChanged: (s) {
+                        _diff = s.first;
+                        _newGame();
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${cfg.label}. Clusters ${clusterCount(board)}. '
+                      'Influence ${influence(board).toStringAsFixed(2)}. '
+                      'Streak ${_game.lowInfluenceStreak} of ${cfg.n}. '
+                      'Changing difficulty starts a new game.',
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -32,12 +32,17 @@ flutter run
 Then open `android/` in Android Studio, or `ios/Runner.xcworkspace` in
 Xcode.
 
-## Desktop package (counted download)
+## Desktop board
 
-This phone app does not replace the desktop package.
+From the repository root:
 
-# → https://postking-download-tracker.vibelock.workers.dev/ ←
+```bash
+python -m venv .venv && source .venv/bin/activate && pip install -e .
+postking ui
+```
+
+Open http://127.0.0.1:8844/
+
+Counted download: https://postking-download-tracker.vibelock.workers.dev/
 
 GitHub: https://github.com/AzielEliab/postking-chess
-
-**Forks are welcome and always allowed.**
