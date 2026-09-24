@@ -86,3 +86,7 @@ with OpenAPI at https://postking-download-tracker.vibelock.workers.dev/openapi.j
 ## Cite
 
 Aziel Eliab. Post-King Chess. https://github.com/AzielEliab/postking-chess. https://doi.org/10.5281/zenodo.21897338.
+
+## Notes
+
+Hosted mesh status is `GET /v1/mesh` (default off). **QNS-CD-1.0** is a hub cite on that mesh, not a Softwares-tab product. No public qnsd proxy. Local qnsd lives in [qnm-node](https://github.com/AzielEliab/qnm-node). Author: Aziel Eliab.
