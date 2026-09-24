@@ -420,54 +420,93 @@ async function indexHtml(env) {
 </script>
 <!-- gitbaby-seo -->
 <style>
-  :root { color-scheme: dark; }
-  body { font: 16px/1.45 system-ui, sans-serif; max-width: 42rem; margin: 3rem auto; padding: 0 1.25rem 4rem; background: #0e1014; color: #e8eaef; }
-  h1 { font-size: 1.75rem; margin: 0 0 .35rem; }
-  .motto { color: #9aa3b2; margin: 0 0 1.5rem; }
-  .card { border: 1px solid #2a3140; border-radius: 12px; padding: 1.25rem 1.35rem; background: #151922; }
-  .nums { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: 0 0 1rem; }
-  .count { font-size: 2.2rem; font-variant-numeric: tabular-nums; font-weight: 700; margin: 0; }
-  .count span { display: block; font-size: .95rem; font-weight: 500; color: #9aa3b2; }
-  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: 0 0 .85rem; }
-  @media (max-width: 520px) { .btns { grid-template-columns: 1fr; } }
-  a.btn, button.btn { display: block; width: 100%; box-sizing: border-box; text-align: center; font: inherit; font-size: 1.2rem; font-weight: 750; padding: 1rem 1.1rem; border-radius: 10px; border: 0; cursor: pointer; text-decoration: none; }
-  a.btn.primary { background: #e8eaef; color: #0e1014; }
-  button.btn.install { background: #c9a227; color: #14110a; }
-  button.btn.install.copied { background: #7dcf9a; color: #0e1014; }
-  .kid { font-size: 1.05rem; margin: 0 0 1rem; }
-  .meta { margin-top: 1.1rem; color: #9aa3b2; font-size: .92rem; }
-  .meta a { color: #c9d4ff; }
-  .iso { margin-top: .85rem; font-size: .85rem; color: #7d8696; }
-  .banner { border: 1px solid #5c4a1a; background: #241c0d; color: #f0d78c; padding: .85rem 1rem; border-radius: 8px; margin: 0 0 1.2rem; font-size: .92rem; }
-  pre { background: #0e1014; padding: .75rem .9rem; overflow: auto; border-radius: 8px; font-size: .82rem; }
-  code { font-size: .88rem; }
-
-  .cite { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid #2a3140; }
-  .cite h2 { font-size: 1.05rem; margin: 0 0 .4rem; }
-  .cite p { color: #c5ccd8; font-size: .95rem; }
-  .cite a { color: #c9d4ff; }
-  #meshStrip { border: 1px solid #c9a227; border-radius: 12px; padding: .85rem 1rem; background: #101010; margin: 0 0 1.2rem; display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; font-size: .88rem; color: #9aa3b2; }
-  #meshStrip .live { color: #e8eaef; }
-  #meshStrip .live b { color: #c9a227; font-size: 1.35rem; margin-right: .35rem; }
-  #meshStrip .rollup b { color: #c9a227; }
-  #meshStrip button { font: 700 .78rem/1 ui-monospace, Menlo, Consolas, monospace; height: 2rem; padding: 0 .75rem; border-radius: 8px; background: #101010; color: #e8eaef; border: 1px solid #c9a227; cursor: pointer; }
-  #meshStrip button:hover { background: #241c0d; color: #c9a227; }
-  #meshStrip input { width: 10rem; padding: .4rem .55rem; border: 1px solid #c9a227; border-radius: 8px; background: #0e0e0e; color: #e8eaef; font: inherit; }
-  #meshProducts { flex-basis: 100%; margin: 0; }
+  :root {
+    color-scheme: dark;
+    --bg: #0b0b0b; --text: #f4f1ea; --muted: #c8c2b6; --panel: #161616;
+    --line: #8d8374; --gold: #e7c56a; --btn: #f4f1ea; --btn-ink: #14120c;
+    --focus: #ffffff; --field: #101010; --install-ink: #14110a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      color-scheme: light;
+      --bg: #fbf8f2; --text: #1a1612; --muted: #4a453c; --panel: #ffffff;
+      --line: #6e675c; --gold: #6a4e10; --btn: #1a1612; --btn-ink: #fbf8f2;
+      --focus: #1a1612; --field: #ffffff; --install-ink: #fbf8f2;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 16px/1.5 system-ui, "Segoe UI", sans-serif; max-width: 58rem; margin: 0 auto; padding: 1.15rem 1rem 2.5rem; overflow-x: clip; }
+  a { color: var(--text); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .skip { position: absolute; left: -999px; top: 0; }
+  .skip:focus { left: 1rem; top: 1rem; z-index: 5; background: var(--btn); color: var(--btn-ink); padding: .45rem .75rem; text-decoration: none; outline: 2px solid var(--focus); outline-offset: 2px; }
+  .hero { margin: 0 0 1.15rem; }
+  h1 { font-size: clamp(2rem, 8vw, 2.6rem); font-weight: 650; letter-spacing: .02em; margin: 0 0 .25rem; line-height: 1.15; }
+  .motto { color: var(--gold); font-style: italic; margin: 0 0 .7rem; font-size: 1.08rem; }
+  .lede { color: var(--muted); margin: 0 0 1rem; max-width: 40rem; }
+  a.btn.block.primary { display: block; width: 100%; max-width: 40rem; margin: 0 0 .7rem; padding: 1.05rem 1.2rem; border: 1px solid transparent; border-radius: 9px; background: var(--btn); color: var(--btn-ink); text-align: center; text-decoration: none; font: 700 1.25rem/1.1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .03em; }
+  a.btn.block.primary:hover { filter: brightness(1.08); }
+  .asset-note { color: var(--muted); font-size: .95rem; margin: 0 0 .85rem; overflow-wrap: anywhere; }
+  .nums { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: 0 0 1rem; max-width: 40rem; }
+  .count { font-size: 1.35rem; font-variant-numeric: tabular-nums; font-weight: 700; margin: 0; }
+  .count span { display: block; font-size: .92rem; font-weight: 500; color: var(--muted); }
+  .features { display: grid; grid-template-columns: 1fr; gap: .45rem 1.2rem; margin: 0; padding: 0; list-style: none; max-width: 46rem; }
+  .features li { margin: 0; }
+  .card { border: 1px solid var(--line); border-radius: 14px; padding: 1.15rem 1.2rem 1.25rem; background: var(--panel); margin: 0 0 1.1rem; }
+  h2 { font-size: 1.05rem; font-weight: 650; margin: 1rem 0 .45rem; }
+  button.btn.install { background: var(--gold); color: var(--install-ink); border: 0; border-radius: 9px; padding: .72rem 1rem; font: 700 .95rem/1.2 ui-monospace, Menlo, Consolas, monospace; cursor: pointer; max-width: 100%; white-space: normal; }
+  button.btn.install:hover { filter: brightness(1.06); }
+  button.btn.install.copied { background: #146c43; color: #f4f1ea; }
+  .kid { font-size: 1rem; margin: 0 0 .85rem; }
+  .meta, .iso { margin: .85rem 0 0; color: var(--muted); font-size: .92rem; }
+  .meta a, footer.quiet a { color: var(--text); text-underline-offset: 2px; }
+  pre { background: var(--field); color: var(--text); border: 1px solid var(--line); padding: .75rem .9rem; overflow-x: auto; max-width: 100%; border-radius: 8px; font-size: .82rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  code { font-size: .92em; }
+  footer.quiet { padding: .2rem 0 .4rem; color: var(--muted); font-size: .9rem; }
+  footer.quiet p { margin: .35rem 0; }
+  #meshStrip { border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; background: var(--panel); margin: 0 0 1.1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; font-size: .88rem; color: var(--muted); }
+  #meshStrip > * { min-width: 0; max-width: 100%; }
+  #meshStrip .live { color: var(--text); }
+  #meshStrip .live b { color: var(--gold); font-size: 1.35rem; margin-right: .35rem; }
+  #meshStrip .rollup b { color: var(--gold); }
+  #meshStrip .mesh-actions { display: flex; flex-wrap: wrap; gap: .45rem; width: 100%; }
+  #meshStrip button { font: 700 .78rem/1 ui-monospace, Menlo, Consolas, monospace; height: 2rem; padding: 0 .75rem; border-radius: 8px; background: transparent; color: var(--text); border: 1px solid var(--line); cursor: pointer; }
+  #meshStrip button:hover { border-color: var(--gold); color: var(--gold); }
+  #meshStrip input { width: min(16rem, 100%); max-width: 100%; min-width: 0; flex: 1 1 12rem; padding: .4rem .55rem; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--text); font: inherit; }
+  #meshProducts { flex-basis: 100%; margin: 0; overflow-wrap: anywhere; }
   .brandrow{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 10px}
   .brandmark{width:40px;height:40px;border-radius:10px;object-fit:cover;flex:0 0 auto;box-shadow:0 0 0 1px #d4af3733}
+  @media (min-width: 720px) {
+    .features { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    body { padding: 1.4rem 1.2rem 2.8rem; }
+  }
 </style>
 <body>
+  <a class="skip" href="#downloadBtn">Skip to download</a>
+  <header class="hero">
   <div class="brandrow"><img class="brandmark" src="/sigil.png" width="40" height="40" alt="" decoding="async"></div>
   <h1>Post-King Chess</h1>
-  <p class="motto">The goal is not to win. The goal is to remain. Author Aziel Eliab.</p>
-  <p class="banner">THIS IS: asymmetric continuity-based chess. Human is king-bound; AI has a Node. Capture of the Node is not an ending. THIS IS NOT: standard chess, a rating engine, or a truth score. Author Aziel Eliab.</p>
+  <p class="motto">The goal is not to win. The goal is to remain.</p>
+  <p class="lede">Asymmetric continuity chess by Aziel Eliab. You keep a king. The other side has a Node. Capture of the Node is not an ending.</p>
+  <a class="btn block primary" id="downloadBtn" href="/download?asset=${DEFAULT_ASSET}" aria-describedby="downloadNote">Download</a>
+  <p class="asset-note" id="downloadNote">${n} downloads · ${DEFAULT_ASSET} · counted on this Worker for every branch and fork</p>
+  <div class="nums">
+    <p class="count">${v}<span>Views</span></p>
+    <p class="count">${n}<span>Downloads</span></p>
+  </div>
+  <ul class="features">
+    <li>Witness, Steward, and Remain</li>
+    <li>Deterministic by seed. Offline.</li>
+    <li>Local board at 127.0.0.1:8844 after install</li>
+  </ul>
+  </header>
   <div id="meshStrip" aria-label="Suite Live Nodes">
     <div class="live"><b id="meshLiveCount">0</b> Live Nodes</div>
     <div id="meshLine">Suite mesh: off (default). QNM-BUILD-1.0 · QNS-CD-1.0. Not an anonymity network.</div>
     <div class="rollup">live <b id="qnmLive">0</b> · locked <b id="qnmLocked">0</b> · isolated <b id="qnmIsolated">0</b></div>
     <div>No Node Gate · No public qnsd proxy · No auto-heal · Aziel Eliab only</div>
-    <div>
+    <div class="mesh-actions">
       <input id="meshBearer" type="text" maxlength="80" placeholder="bearer (required to enable)" aria-label="mesh bearer">
       <button id="meshEnable" type="button" title="Enable suite mesh. Declared bearer required. Default off.">Enable</button>
       <button id="meshDisable" type="button" title="Disable suite mesh (always allowed)">Disable</button>
@@ -477,22 +516,13 @@ async function indexHtml(env) {
     <p id="meshProducts">Catalog MCP mesh_* · FragGate slug=mesh · /v1/mesh/* PROXY · QNS-CD-1.0 cross-map · not a Softwares-tab product · not AnonBroadcast · not AZMail ring · not a Node Gate · no public qnsd proxy</p>
   </div>
   <div class="card">
-    <div class="nums">
-      <p class="count">${v}<span>Views</span></p>
-      <p class="count">${n}<span>Downloads</span></p>
-    </div>
-    <p class="kid"><strong>Two big buttons.</strong> Download saves the gzip (the Downloads number goes up). One-click install copies a Terminal command. After it finishes, type <code>postking ui</code>.</p>
-    <div class="btns">
-      <a class="btn primary dl" href="/download?asset=${DEFAULT_ASSET}">Download</a>
-      <button type="button" class="btn install" id="install-btn">One-click install</button>
-    </div>
+    <p class="kid">One-click install copies a Terminal command. After it finishes, type <code>postking ui</code>.</p>
+    <button type="button" class="btn install" id="install-btn">One-click install</button>
     <pre id="install-cmd">${INSTALL_LINE}</pre>
     <p class="kid">Then run: <code>postking ui</code> and open http://127.0.0.1:8844 (this computer only).</p>
-    <p class="meta">The download count ticks on the Download click. The Worker serves the gzip (HTTP 200). No 302 to GitHub. Forks using this same link are counted automatically. ${DEFAULT_ASSET} — ${n} counted.</p>
+    <p class="meta">The download count ticks when Download is clicked. The Worker serves the gzip (HTTP 200). Forks and other branches that use this link are counted on their own keys, and the total includes them. ${DEFAULT_ASSET} — ${n} counted.</p>
     <p class="iso">Isolated counter: Worker <code>postking-download-tracker</code>, project <code>${PROJECT}</code>, KV <code>POSTKING_DOWNLOADS</code>. Not mixed with any other product. /v1 does not increment downloads.</p>
     <p class="meta">GitHub: stars ${gh.stars || 0} · forks ${gh.forks || 0} · watchers ${gh.watchers || 0} · release assets ${gh.release_download_count || 0}</p>
-    <p class="meta">Paper: <a href="${DOI}">doi:10.5281/zenodo.21897338</a> · <a href="${ZENODO}">Zenodo</a> · CC BY 4.0 · Eliab, Aziel</p>
-    <p class="meta"><a href="/stats">JSON stats</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/mesh">/v1/mesh</a> · <a href="/v1/skill">Skill</a> · <a href="/ai">AI runtime</a> · <a href="${GITHUB_REPO}">GitHub</a> · <a href="${GITHUB_LATEST}">releases</a></p>
     <script>
       (function () {
         var cmd = "curl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash";
@@ -624,11 +654,11 @@ async function indexHtml(env) {
     <ul>${breakdown}</ul>
   </div>
 
-<section class="cite" id="cite">
-  <h2>How to cite</h2>
-  <p>Aziel Eliab. Post-King Chess. https://github.com/AzielEliab/postking-chess. https://postking-download-tracker.vibelock.workers.dev. https://doi.org/10.5281/zenodo.21897338.</p>
-  <p><a href="https://aziel-runtime.vibelock.workers.dev/">Catalog</a> · <a href="https://github.com/AzielEliab/postking-chess">GitHub</a> · <a href="https://postking-download-tracker.vibelock.workers.dev/download">Download</a> · <a href="https://postking-download-tracker.vibelock.workers.dev/cite.json">cite.json</a></p>
-</section>
+<footer class="quiet">
+  <p>CC BY 4.0 · Aziel Eliab · Post-King Chess 0.1.0</p>
+  <p>Aziel Eliab. Post-King Chess. <a href="${DOI}">doi:10.5281/zenodo.21897338</a> · <a href="${ZENODO}">Zenodo</a></p>
+  <p><a href="${GITHUB_REPO}">GitHub</a> · <a href="/openapi.json">OpenAPI</a> · <a href="/v1/skill">Skill</a> · <a href="/ai">AI runtime</a> · <a href="/stats">Stats</a> · <a href="/cite.json">Cite</a> · <a href="https://aziel-runtime.vibelock.workers.dev/">Catalog</a> · <a href="${GITHUB_LATEST}">Releases</a></p>
+</footer>
 <!-- /gitbaby-seo -->
 </body>
 </html>`;
