@@ -59,22 +59,32 @@ def _philosophy_html() -> bytes:
     body = markdown_to_html(_philosophy_text())
     page = f"""<!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Post-King Chess — Philosophy</title>
 <link rel="stylesheet" href="/style.css">
+</head>
 <body class="philosophy">
-  <header>
-    <div class="tag">Post-King Chess · philosophy README · CC BY 4.0</div>
-    <h1>Philosophy</h1>
-    <p class="motto">The goal is not to win. The goal is to remain.</p>
-    <p><a class="text-link" href="/">Back to the board</a></p>
+  <header class="topbar">
+    <p class="brand">Post-King Chess</p>
+    <p class="by">Aziel Eliab</p>
   </header>
+  <p><a class="text-link" href="/">Back to the board</a></p>
+  <h1>Philosophy</h1>
+  <p class="motto">The goal is not to win. The goal is to remain.</p>
   <article class="readme doc">{body}</article>
 </body>
 </html>
 """
     return page.encode("utf-8")
+
+
+def _prefers_json(header: str | None) -> bool:
+    if not header:
+        return False
+    first = header.split(",", 1)[0].split(";", 1)[0].strip().lower()
+    return first == "application/json"
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -83,6 +93,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt: str, *args: object) -> None:
         return
+
+    def _wants_json(self) -> bool:
+        return _prefers_json(self.headers.get("Accept"))
 
     def _send(self, status: int, body: bytes, content_type: str) -> None:
         self.send_response(status)
@@ -96,9 +109,44 @@ class Handler(BaseHTTPRequestHandler):
         body = json.dumps(obj, indent=2, ensure_ascii=False).encode("utf-8")
         self._send(status, body, "application/json; charset=utf-8")
 
+    def _html_miss(self) -> None:
+        page = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post-King Chess</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <p class="brand">Post-King Chess</p>
+    <p class="by">Aziel Eliab</p>
+  </header>
+  <h1>That page is not here.</h1>
+  <p class="lede">The board is on this computer.</p>
+  <p><a class="text-link" href="/">Back to the board</a></p>
+</body>
+</html>
+"""
+        self._send(404, page.encode("utf-8"), MIME[".html"])
+
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         if path in {"/", "/index.html"}:
+            if self._wants_json():
+                game = Handler.game
+                self._json(
+                    200,
+                    {
+                        "name": "postking",
+                        "version": __version__,
+                        "motto": "The goal is not to win. The goal is to remain.",
+                        "port": DEFAULT_PORT,
+                        "game": None if game is None else game.to_dict(),
+                    },
+                )
+                return
             self._send(200, _web_bytes("index.html"), MIME[".html"])
             return
         if path == "/style.css":
@@ -146,7 +194,10 @@ class Handler(BaseHTTPRequestHandler):
                 return
             self._json(200, {"game": game.to_dict()})
             return
-        self._json(404, {"error": "not found"})
+        if path.startswith("/api/") or self._wants_json():
+            self._json(404, {"error": "not found"})
+            return
+        self._html_miss()
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
@@ -209,18 +260,22 @@ class Handler(BaseHTTPRequestHandler):
 
 def make_server(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> ThreadingHTTPServer:
     if host not in LOOPBACK:
-        raise ValueError("Post-King Chess UI binds loopback only (127.0.0.1)")
+        raise ValueError(
+            "Post-King Chess UI binds loopback only (127.0.0.1). Try: postking ui"
+        )
     Handler.game = None
     return ThreadingHTTPServer((host, port), Handler)
+
+
+def _open_url(host: str, port: int) -> str:
+    shown = f"[{host}]" if ":" in host else host
+    return f"http://{shown}:{port}/"
 
 
 def serve(host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
     httpd = make_server(host, port)
     bound_host, bound_port = httpd.server_address[:2]
-    print(
-        f"Post-King Chess UI http://{bound_host}:{bound_port} "
-        "(loopback only; the goal is to remain)"
-    )
+    print(f"Open {_open_url(str(bound_host), int(bound_port))}", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

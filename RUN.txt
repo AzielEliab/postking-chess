@@ -1,0 +1,9 @@
+Post-King Chess
+Author: Aziel Eliab
+
+1. python -m venv .venv && source .venv/bin/activate && pip install -e .
+2. postking ui
+3. Open http://127.0.0.1:8844/
+
+The board stays on this computer.
+postking --help lists commands. Add --json when a program should read the result.

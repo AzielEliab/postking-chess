@@ -46,11 +46,24 @@ def test_ui_get_root_contains_post_king() -> None:
         assert "Post-King" in html
         assert "The goal is not to win. The goal is to remain." in html
         assert "Witness" in html and "Steward" in html and "Remain" in html
+        assert "Play" in html
+        assert "Advanced" in html
         assert "cdn" not in html.lower()
         assert "googleapis" not in html.lower()
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/style.css", timeout=3) as resp:
             css = resp.read().decode("utf-8")
         assert "gold" in css or "#c9a562" in css
+        assert "prefers-color-scheme" in css
+        assert ":focus-visible" in css
+        req_json = urllib.request.Request(
+            f"http://127.0.0.1:{port}/",
+            headers={"Accept": "application/json"},
+        )
+        with urllib.request.urlopen(req_json, timeout=3) as resp:
+            home = json.loads(resp.read().decode("utf-8"))
+        assert home["name"] == "postking"
+        assert home["version"] == "0.1.0"
+        assert home["game"] is None
         with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/version", timeout=3) as resp:
             payload = json.loads(resp.read().decode("utf-8"))
         assert payload["name"] == "postking"

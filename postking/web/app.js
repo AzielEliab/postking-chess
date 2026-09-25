@@ -1,4 +1,4 @@
-/* Post-King Chess UI. Offline. No telemetry. Click to move. */
+/* Post-King Chess UI. Offline. Click or keyboard to move. */
 (function () {
   const FILES = "abcdefgh";
   const startScreen = document.getElementById("start-screen");
@@ -7,15 +7,22 @@
   const turnLine = document.getElementById("turn-line");
   const resultLine = document.getElementById("result-line");
   const facts = document.getElementById("facts");
+  const setupStatus = document.getElementById("setup-status");
+  const playAgain = document.getElementById("play-again");
 
   let game = null;
   let selected = null;
 
   document.getElementById("new-game").addEventListener("click", newGame);
-  var importEl = document.getElementById("import-game");
+  if (playAgain) playAgain.addEventListener("click", newGame);
+  const importEl = document.getElementById("import-game");
+  const importBtn = document.getElementById("import-btn");
+  if (importBtn && importEl) importBtn.addEventListener("click", () => importEl.click());
   if (importEl) importEl.addEventListener("change", importGame);
-  var exportEl = document.getElementById("export-game");
+  const exportEl = document.getElementById("export-game");
   if (exportEl) exportEl.addEventListener("click", exportGame);
+  const exportBoard = document.getElementById("export-board");
+  if (exportBoard) exportBoard.addEventListener("click", exportGame);
   document.getElementById("back-start").addEventListener("click", () => show("start"));
   const resignBtn = document.getElementById("resign");
   if (resignBtn) resignBtn.addEventListener("click", resign);
@@ -23,6 +30,20 @@
   function show(which) {
     startScreen.classList.toggle("hidden", which !== "start");
     boardScreen.classList.toggle("hidden", which !== "board");
+  }
+
+  function note(msg) {
+    if (setupStatus) setupStatus.textContent = msg || "";
+  }
+
+  function plainError(msg) {
+    const text = String(msg || "");
+    if (!text) return "That did not work. Try Play again.";
+    if (text.indexOf("no game") >= 0) return "No game yet. Press Play.";
+    if (text.indexOf("uci") >= 0) return "Choose a piece, then a destination square.";
+    if (text.indexOf("illegal") >= 0) return "That move is not legal. Choose a highlighted square.";
+    if (text.indexOf("JSON") >= 0) return "That file is not a saved game. Choose a game JSON file.";
+    return text;
   }
 
   function difficulty() {
@@ -41,35 +62,56 @@
     if (!f) return;
     const text = await f.text();
     let payload;
-    try { payload = JSON.parse(text); } catch (e) { resultLine.textContent = "invalid game.json"; return; }
+    try { payload = JSON.parse(text); }
+    catch (e) {
+      note("That file is not JSON. Choose a game JSON file.");
+      return;
+    }
     const res = await fetch("/api/load", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    if (!res.ok) { resultLine.textContent = data.error || "import failed"; return; }
+    if (!res.ok) {
+      note(plainError(data.error) || "Could not open that game. Choose another file.");
+      return;
+    }
     game = data.game;
+    window.__azielLastJson = game;
+    note("Opened " + f.name);
     show("board");
     render();
   }
+
   function exportGame() {
-    if (!game) return;
+    if (!game) {
+      note("Play a game first, then export it.");
+      return;
+    }
     const blob = new Blob([JSON.stringify(game, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "game.json";
     a.click();
     URL.revokeObjectURL(a.href);
+    note("Exported game.json");
   }
+
   async function newGame() {
+    note("");
     const res = await fetch("/api/new", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ difficulty: difficulty(), seed: seed() }),
     });
     const payload = await res.json();
+    if (!res.ok) {
+      note(plainError(payload.error));
+      return;
+    }
     game = payload.game;
+    window.__azielLastJson = game;
     selected = null;
     show("board");
     render();
@@ -82,7 +124,12 @@
       body: "{}",
     });
     const payload = await res.json();
+    if (!res.ok) {
+      if (resultLine) resultLine.textContent = plainError(payload.error);
+      return;
+    }
     game = payload.game || payload;
+    window.__azielLastJson = game;
     selected = null;
     render();
   }
@@ -95,10 +142,11 @@
     });
     const payload = await res.json();
     if (!res.ok) {
-      resultLine.textContent = payload.error || "illegal";
+      resultLine.textContent = plainError(payload.error);
       return;
     }
     game = payload.game;
+    window.__azielLastJson = game;
     selected = null;
     render();
   }
@@ -132,8 +180,8 @@
   function pieceSvg(ch) {
     const human = ch === ch.toUpperCase();
     const kind = ch.toLowerCase();
-    const fill = human ? "#111111" : "#c9a562";
-    const stroke = "#c9a562";
+    const fill = human ? "var(--piece-human)" : "var(--piece-ai)";
+    const stroke = "var(--piece-stroke)";
     const sw = human ? 1.7 : 1.15;
     let inner = "";
     if (kind === "p") inner = `<circle cx="16" cy="18" r="5.2"/>`;
@@ -154,12 +202,13 @@
   function render() {
     if (!game || !game.fen) return;
     const playing = !game.result;
-    const turn = game.side === "white" ? "Human (white) to move." : "Post-King (black) to move.";
-    let line = turn;
-    if (game.result === "human_win") line = "Continuity collapse. The system did not remain.";
-    if (game.result === "human_loss") line = "The king fell.";
+    let line = "Your move.";
+    if (game.side !== "white" && playing) line = "The other side is to move.";
+    if (game.result === "human_win") line = "Continuity collapse. The other side did not remain.";
+    if (game.result === "human_loss") line = "Your king fell.";
     if (game.result === "draw") line = "Draw (" + (game.result_reason || "") + ").";
     turnLine.textContent = line;
+    if (playAgain) playAgain.classList.toggle("hidden", playing);
     document.getElementById("m-clusters").textContent = String(game.clusters);
     document.getElementById("m-influence").textContent = Number(game.influence).toFixed(3) + " / " + Number(game.threshold).toFixed(2);
     document.getElementById("m-collapse").textContent = (game.streak || 0) + " / " + game.n + "   M=" + game.m;
@@ -179,14 +228,17 @@
     for (let r = 7; r >= 0; r--) {
       for (let f = 0; f < 8; f++) {
         const name = FILES[f] + (r + 1);
-        const sq = document.createElement("div");
+        const sq = document.createElement("button");
+        sq.type = "button";
         sq.className = "sq" + ((f + r) % 2 === 0 ? " dark" : "");
         sq.dataset.sq = name;
+        const ch = pieces[name];
+        sq.setAttribute("aria-label", ch ? name + " " + ch : name);
         if (last.has(name)) sq.classList.add("last");
         if (selected === name) sq.classList.add("sel");
         if (dests.has(name)) {
           sq.classList.add("legal");
-          if (pieces[name]) sq.classList.add("occ");
+          if (ch) sq.classList.add("occ");
         }
         if (f === 0) {
           const c = document.createElement("span");
@@ -194,7 +246,6 @@
           c.textContent = String(r + 1);
           sq.appendChild(c);
         }
-        const ch = pieces[name];
         if (ch) sq.insertAdjacentHTML("beforeend", pieceSvg(ch));
         sq.addEventListener("click", () => onSquare(name, ch));
         boardEl.appendChild(sq);

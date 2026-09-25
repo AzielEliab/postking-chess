@@ -49,3 +49,35 @@ def test_help_lists_ui_and_version() -> None:
     assert "ui" in text
     assert "version" in text
     assert "127.0.0.1:8844" in text or "postking ui" in text
+    assert "Author: Aziel Eliab" in text
+
+
+def test_bare_command_welcomes(capsys) -> None:
+    assert main([]) == 0
+    out = capsys.readouterr().out
+    assert "Post-King Chess" in out
+    assert "postking ui" in out
+    assert "required" not in out.lower()
+
+
+def test_unknown_command_has_next_step(capsys) -> None:
+    import pytest
+
+    with pytest.raises(SystemExit) as caught:
+        main(["bogus"])
+    assert caught.value.code == 2
+    err = capsys.readouterr().err
+    assert 'Unknown command "bogus"' in err
+    assert "postking --help" in err
+
+
+def test_status_json_keeps_game_fields(capsys, tmp_path: Path) -> None:
+    import json
+
+    save = str(tmp_path / "game.json")
+    assert main(["new", "--save", save, "--json"]) == 0
+    capsys.readouterr()
+    assert main(["--json", "status", "--save", save]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["game"]["fen"].startswith("rnbqobnr/")
+    assert payload["game"]["difficulty"] == "steward"

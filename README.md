@@ -1,23 +1,64 @@
 # Post-King Chess
 
-Asymmetric continuity-based chess. One side keeps a king. The other side
-does not. Capture is not an ending for the Post-King side. Only
-**Continuity Collapse** is.
+You keep a king. The other side tries to remain.
 
 **Author:** Aziel Eliab
-**Date:** August 2026
 **License:** [CC BY 4.0](LICENSE)
 **Version:** 0.1.0
 
 > The goal is not to win. The goal is to remain.
 
-## Quick start
+## Start
+
+1. Install on this computer:
 
 ```bash
-python -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
+python -m venv .venv && source .venv/bin/activate && pip install -e .
+```
+
+2. Open the board:
+
+```bash
 postking ui
 ```
 
+3. Open http://127.0.0.1:8844/
+
+The board stays on this computer. `postking` with no arguments shows the same next step. `postking --help` lists commands.
+
+## Play in the terminal
+
+```bash
+postking new --difficulty steward --seed 1
+postking move e2e4
+postking status
+```
+
+People see plain text. Add `--json` when a program should read the result. `postking doctor` checks this install.
+
+## The game
+
+- You play white, with a king. You lose if that king is captured or checkmated.
+- The other side has a Node on e8, not a king. Capturing the Node does not end the game.
+- You win by Continuity Collapse: fewer than two groups of its pieces, its influence held under the line for N turns, and no move that restores two groups within M plies.
+- Difficulties: Witness, Steward (default), and Remain. The same seed plays the same game.
+- The board listens on 127.0.0.1 only.
+
+Philosophy and the papers: [docs/philosophy.md](docs/philosophy.md). Phone notes: [mobile/README.md](mobile/README.md).
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `ui` | Open the board at http://127.0.0.1:8844 |
+| `new` | Start a saved game (`game.json`) |
+| `move` | Play one move; the other side replies |
+| `status` | Show the saved game |
+| `doctor` | Check this install |
+| `version` | Print the package version |
+| `import` / `export` | Store or write a JSON file on this computer |
+
+Advanced options (`--difficulty`, `--seed`, `--save`, `--port`, `--json`) are listed by `postking --help`.
 
 ## One-click install
 
@@ -25,180 +66,27 @@ postking ui
 curl -fsSL https://postking-download-tracker.vibelock.workers.dev/install.sh | bash
 ```
 
-The script curls the **counted** tarball from this project's Worker
-(`/download`, User-Agent `Mozilla/5.0`), extracts, makes a venv, and
-`pip install -e .`. Then run `postking ui`.
+Then run `postking ui` and open http://127.0.0.1:8844/.
 
-Or tap **Download** / **One-click install** on the Worker homepage:
-https://postking-download-tracker.vibelock.workers.dev/
+Counted download: https://postking-download-tracker.vibelock.workers.dev/
 
-## Counted download (Cloudflare Worker)
+GitHub: https://github.com/AzielEliab/postking-chess
 
-**This is the counted download.** GitHub releases exist as a mirror.
-The Worker serves the gzip itself (HTTP 200, no 302 to GitHub).
-
-- Homepage: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
-- Direct tarball: [postking-chess-0.1.0.tar.gz](https://postking-download-tracker.vibelock.workers.dev/download?asset=postking-chess-0.1.0.tar.gz)
-- One-click install: [https://postking-download-tracker.vibelock.workers.dev/install.sh](https://postking-download-tracker.vibelock.workers.dev/install.sh)
-- Skill: [https://postking-download-tracker.vibelock.workers.dev/v1/skill](https://postking-download-tracker.vibelock.workers.dev/v1/skill)
-- Suite mesh proxy: [https://postking-download-tracker.vibelock.workers.dev/v1/mesh](https://postking-download-tracker.vibelock.workers.dev/v1/mesh) — default OFF; QNM live / locked / isolated; **QNS-CD-1.0** cross-map
-- OpenAPI: [https://postking-download-tracker.vibelock.workers.dev/openapi.json](https://postking-download-tracker.vibelock.workers.dev/openapi.json)
-- GitHub: [https://github.com/AzielEliab/postking-chess](https://github.com/AzielEliab/postking-chess)
-- Zenodo DOI: [10.5281/zenodo.21897338](https://doi.org/10.5281/zenodo.21897338) · [record](https://zenodo.org/records/21897338)
-
-Isolated counter: Worker `postking-download-tracker`, KV `POSTKING_DOWNLOADS`. `/v1` does not increment downloads.
-
-Open http://127.0.0.1:8844 (loopback only). No CDN, no telemetry.
-
-Counted download: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
-
+DOI: https://doi.org/10.5281/zenodo.21897338
 
 How to contribute: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-**Forks are welcome and always allowed.**
+## Hosted play
 
-This tree is a standalone product; not ForgeReceipts / ZionPattern /
-DecisionGATE / AZ-OS / Glossa Filter / any *Lock.
+This package is the local game. A hosted subset also answers at
+https://postking-download-tracker.vibelock.workers.dev/v1/health
+with OpenAPI at https://postking-download-tracker.vibelock.workers.dev/openapi.json.
+`/v1` does not count downloads. The skill for that host is [SKILL.md](SKILL.md).
 
-Counted downloads (number on the button, no user reporting):
-[https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
+## Cite
 
-Direct counted tarball:
-[postking-chess-0.1.0.tar.gz](https://postking-download-tracker.vibelock.workers.dev/download?asset=postking-chess-0.1.0.tar.gz)
+Aziel Eliab. Post-King Chess. https://github.com/AzielEliab/postking-chess. https://doi.org/10.5281/zenodo.21897338.
 
-GitHub: [https://github.com/AzielEliab/postking-chess](https://github.com/AzielEliab/postking-chess)
+## Notes
 
-## iPhone & Android
-
-A local-first Flutter client lives in [`mobile/`](mobile/). Open that
-folder in Android Studio or Xcode through Flutter (`flutter create .`
-first if `android/` / `ios/` still hold the skeleton READMEs). Board UI,
-Witness / Steward / Remain, Philosophy screen. Human has a king; AI has
-a node. Motto: *The goal is not to win. The goal is to remain.*
-
-Counted desktop download: [https://postking-download-tracker.vibelock.workers.dev/](https://postking-download-tracker.vibelock.workers.dev/)
-
-Forks are welcome and always allowed.
-
-Papers live in [docs/source](docs/source). The in-game Philosophy README
-is [docs/philosophy.md](docs/philosophy.md).
-
----
-
-## What it is
-
-- Human (white): standard chess including King. Loses if the King is
-  captured or checkmated. May not move into check. Castling allowed if
-  legal.
-- Post-King AI (black): no King. `e8` is a **Node** (`o` / `O`) that
-  moves like a king. Capturing it is ordinary, not terminal. No check.
-  Cannot castle.
-- Human win = Continuity Collapse. All three: (1) fewer than two
-  8-adjacent AI clusters; (2) AI influence below the difficulty
-  threshold for N full turns; (3) no legal AI move restores ≥2 clusters
-  within M plies.
-- Difficulties in this copy: Witness (N=2, M=1, infl=0.18, shallow),
-  Steward default (N=3, M=2, infl=0.12), Remain (N=5, M=3, infl=0.08,
-  deeper).
-- Deterministic by seed. Stdlib chess kernel. Zero runtime deps.
-- Local UI on `127.0.0.1:8844`. Matte black board, subtle gold grid.
-  No CDN.
-
-The AI does not seek victory. The AI seeks continuity. It may not leave
-one cluster if a two-cluster move exists. It ranks valid moves by
-lowest decisiveness, then highest survivability.
-
-## CLI
-
-```bash
-postking version                              # postking 0.1.0
-postking ui                                   # 127.0.0.1:8844 loopback only
-postking new --difficulty steward --seed 1
-postking move e2e4
-postking status
-```
-
-`postking ui` binds loopback only. GET `/philosophy` serves the in-game
-README (systems paper + chess rules + Continuity Loop R=S²C).
-
-## Continuity Loop
-
-Sacrifice → Stewardship → Continuation.
-
-Redemption equation: **R = S²C**
-
-If it cannot continue without you, it was not redeemed.
-
-## Worker
-
-`workers/download-tracker/` is shipped, not deployed from this tree.
-Parent ships. Isolated counter: Worker `postking-download-tracker`,
-project `postking`.
-
-Suite mesh `/v1/mesh/*` PROXY via `AZIEL_RUNTIME` (default **OFF**;
-QNM-BUILD-1.0 live|locked|isolated; no Node Gate). Catalog MCP `mesh_*`
-+ FragGate `slug=mesh`. **QNS-CD-1.0** (photon QNS1 packet transfer) is
-a hub cite / Worker mesh cross-map only — not a Softwares-tab product.
-Local `qnsd` lives in [qnm-node](https://github.com/AzielEliab/qnm-node).
-Runtime cites + catalog field: [aziel-runtime](https://github.com/AzielEliab/aziel-runtime).
-AZInterface holds pair custody. No public qnsd proxy. Identity: Aziel Eliab only.
-
-## AI runtime
-
-Stateless board API. Human is king-bound; AI has a **Node**, not a king.
-Motto: *The goal is not to win. The goal is to remain.*
-
-Worker subset: legal-move kernel + **1-ply** continuity AI (lowest
-decisiveness, then survivability). Full Witness/Steward/Remain search
-depths live in this Python package. Client sends FEN/state every call.
-
-- `GET https://postking-download-tracker.vibelock.workers.dev/v1/health`
-- `GET https://postking-download-tracker.vibelock.workers.dev/v1/mesh` — PROXY suite mesh status (default OFF; QNM-BUILD-1.0 + QNS-CD-1.0)
-- `POST https://postking-download-tracker.vibelock.workers.dev/v1/new` `{difficulty, seed}`
-- `POST https://postking-download-tracker.vibelock.workers.dev/v1/move` `{fen_or_state, uci}`
-- `POST https://postking-download-tracker.vibelock.workers.dev/v1/status` `{state}`
-- OpenAPI 3.1: https://postking-download-tracker.vibelock.workers.dev/openapi.json
-- Help: https://postking-download-tracker.vibelock.workers.dev/ai
-
-`/v1` does not increment the download counter.
-
-One-URL catalog: https://aziel-runtime.vibelock.workers.dev/openapi.json
-
-## Mesh (hub cite / Worker cross-map)
-
-Suite mesh `/v1/mesh/*` PROXY to aziel-runtime via `AZIEL_RUNTIME`. Default **OFF**.
-QNM-BUILD-1.0 live|locked|isolated. GET never enables. No Node Gate. No auto-heal.
-
-**QNS-CD-1.0** (photon QNS1 packet transfer) is a hub cite / Worker mesh
-cross-map only — **not** a Softwares-tab product. This Worker does **not**
-implement `qnsd` and does **not** expose a public qnsd proxy.
-
-| Cite | Where |
-|------|--------|
-| Local `qnsd` | [AzielEliab/qnm-node](https://github.com/AzielEliab/qnm-node) |
-| Runtime cites + catalog field | [AzielEliab/aziel-runtime](https://github.com/AzielEliab/aziel-runtime) · [NODE_MESH.md](https://github.com/AzielEliab/aziel-runtime/blob/main/docs/NODE_MESH.md) · [QNM-WP-1.0](https://github.com/AzielEliab/aziel-runtime/blob/main/docs/designs/QNM-WP-1.0.md) |
-| Pair custody | [AzielEliab/azinterface](https://github.com/AzielEliab/azinterface) |
-
-Identity: **Aziel Eliab** only.
-
-
-## Use with Grok / ChatGPT / Venice
-
-Catalog OpenAPI: https://aziel-runtime.vibelock.workers.dev/openapi.json
-Catalog MCP: `POST https://aziel-runtime.vibelock.workers.dev/mcp`
-This Worker skill: https://postking-download-tracker.vibelock.workers.dev/v1/skill
-This Worker OpenAPI: https://postking-download-tracker.vibelock.workers.dev/openapi.json
-Suite mesh `/v1/mesh/*` PROXY via `AZIEL_RUNTIME` (default OFF; QNM-BUILD-1.0 live|locked|isolated; QNS-CD-1.0 cross-map; no Node Gate). Catalog MCP `mesh_*` + FragGate `slug=mesh`.
-
-Grok: import the catalog or Worker OpenAPI as a custom tool. ChatGPT: GPT Actions (no auth). Venice: HTTP tools. Always send `User-Agent: Mozilla/5.0`.
-
-## Cite this
-
-Aziel Eliab. Post-King Chess. https://github.com/AzielEliab/postking-chess. https://postking-download-tracker.vibelock.workers.dev. https://doi.org/10.5281/zenodo.21897338.
-
-- Catalog: https://aziel-runtime.vibelock.workers.dev/
-- Worker homepage: https://postking-download-tracker.vibelock.workers.dev/
-- Counted download (gzip HTTP 200, no 302): https://postking-download-tracker.vibelock.workers.dev/download
-- GitHub: https://github.com/AzielEliab/postking-chess
-- Citation JSON: https://postking-download-tracker.vibelock.workers.dev/cite.json
-- DOI: https://doi.org/10.5281/zenodo.21897338
+Hosted mesh status is `GET /v1/mesh` (default off). **QNS-CD-1.0** is a hub cite on that mesh, not a Softwares-tab product. No public qnsd proxy. Local qnsd lives in [qnm-node](https://github.com/AzielEliab/qnm-node). Author: Aziel Eliab.
