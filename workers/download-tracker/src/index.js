@@ -1,3 +1,4 @@
+import { crawlFileResponse } from "./crawl-files.js";
 import * as engine from "./engine.js";
 import { handleMeshApi, meshOpenApiPaths, meshPointer, QNS_CD_SPEC } from "./mesh.js";
 import { classifyRequest, readBotManagement } from "./classify.js";
@@ -805,6 +806,9 @@ async function handleRuntime(request, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // Crawl files (/llms.txt). Read-only; never counts a download.
+    const crawlFile = crawlFileResponse(url, request);
+    if (crawlFile) return crawlFile;
 
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders() });
